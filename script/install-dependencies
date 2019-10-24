@@ -1,0 +1,44 @@
+#! /bin/bash
+set -e
+
+if [[ "$1" == "-h" ]] ||  [[ "$1" == "--help" ]]
+then
+    echo "Usage: ./install-dependencies";
+    echo "This script installs all the necessary software to compile, upload, and run the autolocator code."
+    echo "It's intended to run on Mac OSX and is not, at the moment, portable."
+    echo "It will install the arduino core for the first arduino it finds."
+    exit
+fi
+
+if [[ ! $(which brew) ]]
+then
+    echo "Installing Homebrew"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+if [[ ! $(which arduino-cli) ]]
+then
+    echo "Installing Arduino CLI"
+    brew update
+    brew install arduino-cli
+fi
+
+# Install Arduino Core for the first board we find.
+source script/env
+assertBoardConnected
+if [[ ! $(arduino-cli core list | grep $CORE_PACKAGE) ]]
+then
+    echo "Installing Arduino Core $CORE_PACKAGE"
+    arduino-cli core update-index
+    arduino-cli core install $CORE_PACKAGE
+fi
+
+# Install Arduino Dependencies
+if [[ ! $(arduino-cli lib list | grep "ArduinoUnit") ]]
+then
+    echo "Installing Arduino Unit"
+    arduino-cli lib update-index
+    arduino-cli lib install ArduinoUnit
+fi
+
+echo "All done!"
