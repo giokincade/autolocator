@@ -24,6 +24,7 @@ void setup()
 {
     Serial.begin(9600);
     Serial.println("Setup");
+
     attachInterrupt(
         digitalPinToInterrupt(pulseInputPin),
         handleTachPulse,
@@ -32,6 +33,9 @@ void setup()
 }
 
 void handleTachPulse() {
+    //attachInterupt can only take functions with no parameters, so object member functions don't work by default.
+    //Theoretically if we had access to the CPP std lib we could use bind, but that's also not an option.
+    //So instead, we have this shitty global wrapper.
     clock.handleTachPulse();
 }
 
