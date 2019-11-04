@@ -28,3 +28,12 @@ void Clock::handleTachPulse() {
 double Clock::getSecondsFromStart() {
     return _rotationsFromStart * 1.0 / _playbackRpm * 60.0;
 }
+
+String Clock::getTime() {
+    int secondsFromStart = (int) getSecondsFromStart();
+    int hours = secondsFromStart / 60;
+    int seconds = secondsFromStart % 60;
+    char result[] = "00:00";
+    sprintf(result, "%02d:%02d", hours, seconds);
+    return String(result);
+}

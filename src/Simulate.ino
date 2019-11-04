@@ -18,6 +18,11 @@ test(clock) {
         simulator.getSecondsFromStart(),
         (int) clock.getSecondsFromStart()
     );
+    Serial.println(clock.getTime());
+    assertEqual(
+        String("00:25"),
+        clock.getTime()
+    );
 }
 
 void setup()
