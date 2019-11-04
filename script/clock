@@ -1,0 +1,9 @@
+#! /bin/bash
+set -e
+
+source script/env
+assertBoardConnected
+
+arduino-cli compile --fqbn $FQBN --output bin/ClockRunner.hex 'src/ClockRunner.ino'
+arduino-cli upload --fqbn $FQBN --port $DEVICE --verbose --input bin/ClockRunner.hex
+cat $DEVICE
