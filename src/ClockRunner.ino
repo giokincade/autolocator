@@ -30,6 +30,7 @@ static void handleTachPulse() {
 void loop()
 {
     Serial.println(clock.getTime());
-    delay(1000);
+    Serial.println(clock.getRotationsFromStart());
+    delay(250);
 }
 #endif

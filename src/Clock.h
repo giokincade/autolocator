@@ -5,7 +5,7 @@
 
 class Clock {
   public:
-    Clock(int directionPin, int playbackRpm=60.0);
+    Clock(int directionPin, int playbackRps=180.0);
     void handleTachPulse();
     int getRotationsFromStart();
     bool isMovingForward();
@@ -15,7 +15,7 @@ class Clock {
   private:
     int _directionPin;
     int volatile _rotationsFromStart;
-    int _playbackRpm;
+    int _playbackRps;
 };
 
 #endif

@@ -2,15 +2,16 @@
 #include "Clock.h"
 
 
-Clock::Clock(int directionPin, int playbackRpm=60.0) {
+Clock::Clock(int directionPin, int playbackRps=180.0) {
     _directionPin = directionPin;
     _rotationsFromStart = 0;
-    _playbackRpm = playbackRpm;
+    _playbackRps = playbackRps;
     pinMode(_directionPin, INPUT);
 }
 
 bool Clock::isMovingForward() {
-    return digitalRead(_directionPin) == HIGH;
+    //return digitalRead(_directionPin) == LOW;
+    return true;
 }
 
 bool Clock::isMovingBackwards() {
@@ -25,8 +26,12 @@ void Clock::handleTachPulse() {
     }
 }
 
+int Clock::getRotationsFromStart() {
+    return _rotationsFromStart;
+}
+
 double Clock::getSecondsFromStart() {
-    return _rotationsFromStart * 1.0 / _playbackRpm * 60.0;
+    return _rotationsFromStart * 1.0 / _playbackRps;
 }
 
 String Clock::getTime() {
