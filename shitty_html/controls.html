@@ -1,0 +1,161 @@
+<html>
+	<head>
+		<style>
+			@font-face {
+				font-family: 'DotMatrix';
+				src: url('file:///Users/mattwalsh/Desktop/autolocator/Square-Dot-Matrix.ttf');
+			}
+
+			body {
+				background-color: white;
+				color: black;
+			}
+
+			#container {
+				margin: auto;
+				border: 1px solid black;
+				width: 800px;
+				height: 500px;
+			}
+
+			div {
+				border: 1px solid black;
+				width: 54px;
+				height: 54px;
+				position: absolute;
+			}
+
+			#counter {
+				background-color: black;
+				height: 100px;
+				width: 760px;
+				top: 20px;
+				left: 20px;
+
+				font-family: 'DotMatrix';
+				color:red;
+				font-size: 58pt;
+			}
+
+			.counter_small {
+				font-size:40pt;
+			}
+
+			#transport {
+				bottom: 56px;
+				left: 20px;
+				width: 600px;
+				border: none;
+			}
+
+			#transport div 
+			{
+				width: 72px;
+				height: 72px;
+				float: left;
+				margin-right: 20px;
+				display: inline;
+				position: relative;
+			}
+
+			#numeric_keypad {
+				top: 150px;
+				right: 20px;
+				width: 210px;
+				border: none;
+			}
+
+			#numeric_keypad div 
+			{
+				float: left;
+				margin-right: 12px;
+				display: inline;
+				position: relative;
+			}
+
+			.clear, #numeric_keypad .clear, #various .clear {
+				border: none;
+				height:10px;
+				width:1px;
+				clear: both;
+				display: block;
+				float: none;
+			}
+
+			#various {
+				top: 150px;
+				left: 20px;
+				width: 400px;
+				border: none;
+			}
+
+			#various div {
+				float: left;
+				margin-right: 25px;
+				display: inline;
+				position: relative;
+			}
+
+			.circle:before {
+				content: ' \25CF';
+				font-size: 50px;
+				border: none !important;
+				color: red;
+				position: absolute;
+				top: -8px;
+				left: 12px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="counter"><span class="counter_small">PL </span>09:47.2 <span class="counter_small">L24 </span>09:03.4</div>
+
+			<div id="transport">
+				<div id="record">rec</div>
+				<div id="play">play</div>
+				<div id="stop">stop</div>
+				<div id="rewind">rew</div>
+				<div id="fastforward">ffwd</div>
+			</div>
+
+			<div id="various">
+				<div id="reset">RESET</div>
+				<div id="return_to_zero">RTZ</div>
+				<div id="locate">LOC</div>
+				<div id="current">CRNT</div>
+
+				<div class="clear"></div>
+
+				<div id="auto_punch_light" class="circle"></div>
+				<div id="auto_punch_enable">AP ON</div>
+				<div id="auto_punch_in">AP IN</div>
+				<div id="auto_punch_out">AP OUT</div>
+				
+				<div class="clear"></div>
+
+				<div id="speed_toggle">SPD</div>
+
+			</div>
+
+			<div id="numeric_keypad">
+				<div id="num_9">9</div>
+				<div id="num_8">8</div>
+				<div id="num_7">7</div>
+				<div class="clear"></div>
+				<div id="num_6">6</div>
+				<div id="num_5">5</div>
+				<div id="num_4">4</div>
+				<div class="clear"></div>
+				<div id="num_3">3</div>
+				<div id="num_2">2</div>
+				<div id="num_1">1</div>
+				<div class="clear"></div>
+				<div id="store">STO</div>
+				<div id="num_0">0</div>
+				<div id="recall">RCL</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</body>
+</html>
