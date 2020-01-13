@@ -4,7 +4,7 @@
 #include "Clock.h"
 
 static const int pulseInputPin = 2;
-static const int directionInputPin = 4;
+static const int directionInputPin = A0;
 
 static Clock clock = Clock(directionInputPin, 40.0);
 
@@ -30,6 +30,9 @@ static void handleTachPulse() {
 
 void loop()
 {
+
+    Serial.println(clock.isMovingForward() ? "forwards" : "backwards");
+    Serial.println(analogRead(directionInputPin));
     Serial.println(clock.getTime());
     Serial.println(clock.getRotationsFromStart());
     delay(1000);
