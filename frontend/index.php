@@ -33,7 +33,6 @@
     }
 
     .Container {
-      max-width: 120rem;
       background: #cecece;
       margin: 0 auto;
       display: grid;
@@ -288,8 +287,7 @@
       if (isPhp) {
         var host = '<?echo _SERVER("HTTP_HOST")?>';
 
-        if((navigator.platform.indexOf("Win") != -1) && (host.charAt(0) == "["))
-        {
+        if ((navigator.platform.indexOf("Win") != -1) && (host.charAt(0) == "[")) {
           // network resource identifier to UNC path name conversion
           host = host.replace(/[\[\]]/g, '');
           host = host.replace(/:/g, "-");
@@ -336,7 +334,10 @@
     var recieveMessage = function (message) {
       if (message.indexOf('/') > -1) {
         var parts = message.split('/');
-        ui.element(parts[0]).innerHTML = parts[1];
+        var element = ui.element(parts[0]);
+        if (element) {
+          element.innerHTML = parts[1];
+        }
       }
     }
 
@@ -383,7 +384,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       ui = {
-        buttons: document.querySelectorAll('.Button'),
+        buttons: document.querySelectorAll('.Button:not(.Button--Socket)'),
         element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
         socket: document.querySelector('.Button--Socket')
       };
