@@ -37,6 +37,7 @@
       background: #cecece;
       margin: 0 auto;
       display: grid;
+      grid-template-rows: 2fr 3fr;
       height: 100vh;
     }
 
@@ -44,14 +45,16 @@
     .Counter {
       background: #1e1e1e;
       color: #ff0000;
-      padding: 2rem 4rem 4rem;
+      padding: 2rem;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
       line-height: 1;
-      height: calc(52vh - 6rem);
       align-items: center;
       justify-items: center;
-      background: linear-gradient(#2d2d2d 0%, #000 100%)
+      background: linear-gradient(#2d2d2d 0%, #000 100%);
+      font-family: 'Segment';
+      width: 100vw;
     }
 
     .Counter__time,
@@ -60,33 +63,42 @@
     }
 
     .Counter__time {
-      font-size: 14rem;
-      font-family: 'Segment';
+      font-size: 10rem;
     }
 
     .Counter__indicator {
       font-size: 3rem;
-      font-family: 'Segment';
-
     }
 
     /* REMOTE */
     .Remote {
       padding: 2rem;
-      height: calc(61vh - 4rem);
       position: relative;
       background: linear-gradient(#b5b5b5 0%, #9f9f9f 100%);
       display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      grid-template-rows: repeat(4, 1fr);
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      grid-template-areas:
+        "f f f f f f"
+        ". . . n n n"
+        ". . . n n n"
+        ". . . n n n"
+        ". . . n n n"
+        ". . . . . ."
+        "c c c c c c";
+      width: 100vw;
+    }
+
+    .Remote > div {
+      grid-gap: 0.5rem;
     }
 
     /* FUNCTIONS */
     .Functions {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       grid-template-rows: repeat(2, 1fr);
-      grid-gap: 1rem;
+      grid-area: f;
     }
 
     /* NUMPAD */
@@ -94,10 +106,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(4, 1fr);
-      grid-gap: 1rem;
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
+      grid-area: n;
     }
 
     /* BUTTONS */
@@ -106,8 +115,8 @@
       padding: 0;
       background: #efefef;
       position: relative;
-      width: 9rem;
-      height: 9rem;
+      /* width: 9rem;
+      height: 9rem; */
       background: linear-gradient(#d9d9d9 0%, #d0d0d0 100%);
     }
 
@@ -144,20 +153,64 @@
     .Controls {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      grid-gap: 1rem;
-      position: absolute;
-      bottom: 2rem;
-      left: 2rem;
+      grid-area: c;
     }
 
     .Controls .Button {
-      width: 12rem;
-      height: 12rem;
+      /* width: 12rem;
+      height: 12rem; */
     }
 
     /* SOCKET CONNECTION */
     .Socket {
-      grid-column: 8 / end;
+
+    }
+
+    @media screen and (min-width: 667px) {
+      .Container {
+        grid-template-rows: 1fr 3fr;
+      }
+
+      .Counter {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+      }
+
+      .Counter__time {
+        font-size: 8rem;
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      .Remote > div {
+        grid-gap: 1rem;
+      }
+      .Counter {
+        padding: 2rem 4rem 4rem;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      .Counter__time {
+        font-size: 14rem;
+      }
+
+      .Remote {
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        grid-template-areas:
+          "f f f f f f . n n n"
+          "f f f f f f . n n n"
+          ". . . . . . . n n n"
+          "c c c c c c . n n n";
+      }
+    }
+
+    @media screen and (min-width: 1024px) {
+      .Counter {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+      }
     }
   </style>
 </head>
@@ -184,10 +237,7 @@
         <button class="Button Button--Locate" data-id="locate"><div class="content">Loc</div></button>
         <button class="Button Button--Current" data-id="current"><div class="content">Current</div></button>
         <button class="Button Button--Speed" data-id="speed"><div class="content">Speed</div></button>
-        <div class="Socket">
-          <button class="Button" data-id="connet"><div class="content">Connect</div></button>
-        </div>
-
+        <button class="Button Button--Socket" data-id="connet"><div class="content">Connect</div></button>
 
         <!-- <button class="Button Button--AutoPunchOn" data-id="autopunch_on"><div class="content">AP On</div></button>
         <button class="Button Button--AutoPunchIn" data-id="autopunch_in"><div class="content">AP In</div></button>
@@ -198,7 +248,6 @@
         <button class="Button"><div class="content"></div></button>
         <button class="Button"><div class="content"></div></button>
         <button class="Button"><div class="content"></div></button> -->
-
       </div>
       <!-- FUNCTIONS END -->
 
@@ -336,7 +385,7 @@
       ui = {
         buttons: document.querySelectorAll('.Button'),
         element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
-        socket: document.querySelector('.Socket .Button')
+        socket: document.querySelector('.Button--Socket')
       };
 
       bindEvents();
