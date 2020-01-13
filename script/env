@@ -1,10 +1,9 @@
 #! /bin/bash
 
-export BOARD=$(arduino-cli board list | head -2 | tail -1)
-
-export FQBN=$(echo $BOARD | awk '{ print $NF }')
+export BOARD=$(arduino-cli board list | head -3 | tail -1)
+export FQBN=$(echo $BOARD | awk '{ print $(NF-1) }')
 # For whatever reason Arduino changed the core package name for the Mega AVR.
-export CORE_PACKAGE=$(echo $FQBN | sed -e "s/arduino:avr:mega/arduino:avr/g")
+export CORE_PACKAGE=$(echo $FQBN | sed -e "s/arduino:avr:uno/arduino:avr/g")
 export DEVICE=$(echo $BOARD | awk '{ print $1 }')
 
 function assertBoardConnected {
