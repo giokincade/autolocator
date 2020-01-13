@@ -6,13 +6,14 @@
 static const int pulseInputPin = 2;
 static const int directionInputPin = 4;
 
-static Clock clock = Clock(directionInputPin);
+static Clock clock = Clock(directionInputPin, 40.0);
 
 static void setup()
 {
     Serial.begin(9600);
     Serial.println("Setup");
 
+    pinMode(pulseInputPin, INPUT_PULLUP);
     attachInterrupt(
         digitalPinToInterrupt(pulseInputPin),
         handleTachPulse,
@@ -31,6 +32,6 @@ void loop()
 {
     Serial.println(clock.getTime());
     Serial.println(clock.getRotationsFromStart());
-    delay(250);
+    delay(1000);
 }
 #endif

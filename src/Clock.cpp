@@ -2,7 +2,7 @@
 #include "Clock.h"
 
 
-Clock::Clock(int directionPin, int playbackRps=180.0) {
+Clock::Clock(int directionPin, double playbackRps) {
     _directionPin = directionPin;
     _rotationsFromStart = 0;
     _playbackRps = playbackRps;
@@ -35,10 +35,12 @@ double Clock::getSecondsFromStart() {
 }
 
 String Clock::getTime() {
-    int secondsFromStart = (int) getSecondsFromStart();
-    int hours = secondsFromStart / 60;
-    int seconds = secondsFromStart % 60;
-    char result[] = "00:00";
-    sprintf(result, "%02d:%02d", hours, seconds);
+    double secondsFromStart = getSecondsFromStart();
+    int hours = (int) secondsFromStart / 60;
+    float seconds = secondsFromStart - (hours * 60);
+    char result[] = "00:00.00";
+    char secondsBuffer[] = "00.00";
+    dtostrf(seconds, 4, 2, secondsBuffer);
+    sprintf(result, "%02d:%s", hours, secondsBuffer);
     return String(result);
 }
