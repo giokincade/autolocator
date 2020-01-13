@@ -7,14 +7,14 @@ class Clock {
   public:
     Clock(int directionPin, double playbackRps=90.0);
     void handleTachPulse();
-    int getRotationsFromStart();
+    long getRotationsFromStart();
     bool isMovingForward();
     bool isMovingBackwards();
     double getSecondsFromStart();
     String getTime();
   private:
     int _directionPin;
-    int volatile _rotationsFromStart;
+    long volatile _rotationsFromStart;
     double _playbackRps;
 };
 

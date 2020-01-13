@@ -4,12 +4,12 @@
 
 Clock::Clock(int directionPin, double playbackRps) {
     _directionPin = directionPin;
-    _rotationsFromStart = 0;
+    _rotationsFromStart = 0L;
     _playbackRps = playbackRps;
 }
 
 bool Clock::isMovingForward() {
-    return analogRead(_directionPin) < 200;
+    return analogRead(_directionPin) < 500;
 }
 
 bool Clock::isMovingBackwards() {
@@ -24,7 +24,7 @@ void Clock::handleTachPulse() {
     }
 }
 
-int Clock::getRotationsFromStart() {
+long Clock::getRotationsFromStart() {
     return _rotationsFromStart;
 }
 
@@ -37,7 +37,7 @@ String Clock::getTime() {
     int hours = (int) secondsFromStart / 60;
     float seconds = secondsFromStart - (hours * 60);
     int secondsDisplay = (int) seconds;
-    int tenthsOfSecond = ((seconds - (secondsDisplay*1.0)) * 100);
+    int tenthsOfSecond = (int) ((seconds - (secondsDisplay*1.0)) * 100);
 
     char result[] = "00:00.00";
     sprintf(result, "%02d:%02d.%02d", hours, secondsDisplay, tenthsOfSecond);
