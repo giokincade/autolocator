@@ -32,7 +32,7 @@ void loop()
 {
 
     Serial.println(clock.isMovingForward() ? "forwards" : "backwards");
-    Serial.println(analogRead(directionInputPin));
+    Serial.println(analogRead(A2));
     Serial.println(clock.getTime());
     Serial.println(clock.getRotationsFromStart());
     delay(1000);

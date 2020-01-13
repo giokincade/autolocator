@@ -36,9 +36,10 @@ String Clock::getTime() {
     double secondsFromStart = getSecondsFromStart();
     int hours = (int) secondsFromStart / 60;
     float seconds = secondsFromStart - (hours * 60);
+    int secondsDisplay = (int) seconds;
+    int tenthsOfSecond = ((seconds - (secondsDisplay*1.0)) * 100);
+
     char result[] = "00:00.00";
-    char secondsBuffer[] = "00.00";
-    dtostrf(seconds, 4, 2, secondsBuffer);
-    sprintf(result, "%02d:%s", hours, secondsBuffer);
+    sprintf(result, "%02d:%02d.%02d", hours, secondsDisplay, tenthsOfSecond);
     return String(result);
 }
