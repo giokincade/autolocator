@@ -1,4 +1,6 @@
+.DS_Store
 .core
 *.hex
 *.elf
 .DS_Store
+.vscode

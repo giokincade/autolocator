@@ -41,4 +41,13 @@ then
     arduino-cli lib install ArduinoUnit
 fi
 
+# Install OSC
+if [[ ! $(arduino-cli lib list | grep "OSC") ]]
+then
+    echo "Installing Arduino Unit"
+    arduino-cli lib update-index
+    arduino-cli lib install PHPoC
+fi
+
+
 echo "All done!"
