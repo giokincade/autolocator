@@ -71,32 +71,31 @@
 
     /* REMOTE */
     .Remote {
-      padding: 2rem;
+      padding: 0;
       position: relative;
       background: linear-gradient(#b5b5b5 0%, #9f9f9f 100%);
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(7, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(6, 1fr);
       grid-template-areas:
-        "f f f f f f"
-        ". . . n n n"
-        ". . . n n n"
-        ". . . n n n"
-        ". . . n n n"
-        ". . . . . ."
-        "c c c c c c";
+        "f f f f f"
+        ". . n n n"
+        ". . n n n"
+        ". . n n n"
+        ". . n n n"
+        "c c c c c";
       width: 100vw;
     }
 
     .Remote > div {
-      grid-gap: 0.5rem;
+      grid-gap: 0rem;
     }
 
     /* FUNCTIONS */
     .Functions {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(2, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(1, 1fr);
       grid-area: f;
     }
 
@@ -182,7 +181,7 @@
 
     @media screen and (min-width: 768px) {
       .Remote > div {
-        grid-gap: 1rem;
+        grid-gap: 0;
       }
       .Counter {
         padding: 2rem 4rem 4rem;
@@ -195,13 +194,13 @@
       }
 
       .Remote {
-        grid-template-columns: repeat(10, 1fr);
+        grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(4, 1fr);
         grid-template-areas:
-          "f f f f f f . n n n"
-          "f f f f f f . n n n"
-          ". . . . . . . n n n"
-          "c c c c c c . n n n";
+          "f f f f f n n n"
+          "f f f f f n n n"
+          "c c c c c n n n"
+          "c c c c c n n n";
       }
     }
 
@@ -236,7 +235,7 @@
         <button class="Button Button--Locate" data-id="locate"><div class="content">Loc</div></button>
         <button class="Button Button--Current" data-id="current"><div class="content">Current</div></button>
         <button class="Button Button--Speed" data-id="speed"><div class="content">Speed</div></button>
-        <button class="Button Button--Socket" data-id="connet"><div class="content">Connect</div></button>
+        <!-- <button class="Button Button--Socket" data-id="connet"><div class="content">Connect</div></button> -->
 
         <!-- <button class="Button Button--AutoPunchOn" data-id="autopunch_on"><div class="content">AP On</div></button>
         <button class="Button Button--AutoPunchIn" data-id="autopunch_in"><div class="content">AP In</div></button>
@@ -316,6 +315,7 @@
 
       socket.onerror = function (error) {
         console.log('WebSocket Error', error);
+        connectSocket();
       };
 
       socket.onmessage = function (e) {
@@ -353,6 +353,7 @@
         disconnectSocket();
       });
 
+      /*
       // Socket connection events
       ['mousedown', 'touchstart'].forEach(function(eventType) {
         ui.socket.addEventListener(eventType, function(e) {
@@ -365,6 +366,7 @@
           }
         });
       });
+      */
 
       // Buttons events
       ui.buttons.forEach(function(button) {
@@ -390,6 +392,10 @@
       };
 
       bindEvents();
+
+      if (!socket) {
+        connectSocket();
+      }
     }, false);
   </script>
 </body>
