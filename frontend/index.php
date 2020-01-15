@@ -510,17 +510,10 @@
       updateElement(element, value);
 
       // get locate time as int
-      const locateTime = timeFromLocateArray();
+      const locateTime = timeFromArray(locate);
 
-      // update store locate command
-      const storeElement = ui.element('store');
-      const storeCommand = `store/${locateTime}`;
-      updateElementCommand(storeElement, storeCommand);
-
-      // update locate command
-      const locateElement = ui.element('locate');
-      const locateCommand = `locate/${locateTime}`;
-      updateElementCommand(locateElement, locateCommand);
+      // update locate commands
+      updateLocateCommands(locateTime);
     }
 
     const updateLocateStatus = () => {
@@ -528,6 +521,18 @@
 
       const element = ui.element('locate_status');
       updateElement(element, `LOCATE POINT ${parseInt(state.locate_status)}`);
+    }
+
+    const updateLocateCommands = time => {
+      // update store locate command
+      const storeElement = ui.element('store');
+      const storeCommand = `store/${time}`;
+      updateElementCommand(storeElement, storeCommand);
+
+      // update locate command
+      const locateElement = ui.element('locate');
+      const locateCommand = `locate/${time}`;
+      updateElementCommand(locateElement, locateCommand);
     }
 
     const updateSpeed = () => {
@@ -605,8 +610,20 @@
     const handleCurrentButton = () => {
       if (!('playhead_time' in state)) return;
 
+      const time = state.playhead_time;
+
+      // set locate html
       const element = ui.element('locate_time');
-      setTime(element, state.playhead_time);
+      setTime(element, time);
+
+      // set locate button commands
+      updateLocateCommands(time);
+
+      // update locate time array
+      locate = timeToArray(time);
+
+      // reset locate index
+      locateIndex = 0;
     }
 
     const setSocketStatus = text => {
@@ -618,18 +635,28 @@
       updateElement(element, formatTime(time));
     }
 
-    const timeFromLocateArray = () => {
-      const minutes = parseInt(locate.slice(0, 2).join(''));
-      const seconds = parseInt(locate.slice(2, 4).join(''));
-      const decimal = parseInt(locate.slice(4));
+    const timeFromArray = timeArray => {
+      if (!timeArray || timeArray.length > 5) return;
+
+      const minutes = parseInt(timeArray.slice(0, 2).join(''));
+      const seconds = parseInt(timeArray.slice(2, 4).join(''));
+      const decimal = parseInt(timeArray.slice(4));
 
       return minutes * 60 + seconds +  decimal / 10;
     }
 
+    const timeToArray = time => {
+      const { minutes, seconds, decimal } = partsFromTime(time);
+
+      const minuteArray = padNumber(minutes).split('');
+      const secondsArray = padNumber(seconds).split('');
+      const decimalArray = [decimal];
+
+      return [].concat(minuteArray, secondsArray, decimalArray).map(n => parseInt(n));
+    }
+
     const formatTime = time => {
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time % 60);
-      const decimal = (time % 1).toFixed(1).substring(2);
+      const { minutes, seconds, decimal } = partsFromTime(time);
 
       return formatTimeString(padNumber(minutes), padNumber(seconds), decimal);
     }
@@ -637,6 +664,12 @@
     const formatTimeString = (minutes, seconds, decimal) => {
       return `${minutes}:${seconds}.${decimal}`;
     }
+
+    const partsFromTime = time => ({
+      minutes:  Math.floor(time / 60),
+      seconds:  Math.floor(time % 60),
+      decimal:  (time % 1).toFixed(1).substring(2)
+    })
 
     const padNumber = number => {
       const s = `0${number}`;
