@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Autolocator Websocket</title>
   <style>
+    :root {
+      --color_backgrond: hsl(0, 0%, 0%);
+      --color_backgrond--alt: hsl(0, 0%, 15%);
+      --color_counter: hsl(5, 90%, 50%);
+      --color_button: hsl(0, 0%, 10%);
+      --color_button--active: hsl(0, 0%, 12%);
+      --color-text: hsl(5, 90%, 95%);
+      --padding--small: 1rem;
+      --padding--medium: 2rem;
+      --padding--large: 4rem;
+    }
+
     @font-face {
       font-family: 'Segment';
       src: url('Seven-Segment.ttf');
@@ -33,7 +45,6 @@
     }
 
     .Container {
-      background: #cecece;
       margin: 0 auto;
       display: grid;
       grid-template-rows: 2fr 3fr;
@@ -42,16 +53,16 @@
 
     /* COUNTER */
     .Counter {
-      background: #1e1e1e;
-      color: #ff0000;
-      padding: 2rem;
+      color: var(--color_counter);
+      padding: var(--padding--medium);
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: 1fr 1fr;
       line-height: 1;
       align-items: center;
       justify-items: center;
-      background: linear-gradient(#2d2d2d 0%, #000 100%);
+      position: relative;
+      background: linear-gradient(var(--color_backgrond--alt) 0%, var(--color_backgrond) 100%);
       font-family: 'Segment';
       width: 100vw;
     }
@@ -69,11 +80,17 @@
       font-size: 3rem;
     }
 
+    .Socket {
+      position: absolute;
+      top: var(--padding--small);
+      right: var(--padding--small);
+      text-transform: uppercase;
+    }
+
     /* REMOTE */
     .Remote {
-      padding: 0;
       position: relative;
-      background: linear-gradient(#b5b5b5 0%, #9f9f9f 100%);
+      background: linear-gradient(var(--color_backgrond) 0%, var(--color_backgrond--alt) 100%);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(6, 1fr);
@@ -85,10 +102,12 @@
         ". . n n n"
         "c c c c c";
       width: 100vw;
+      padding: var(--padding--small);
+      grid-gap: var(--padding--small);
     }
 
     .Remote > div {
-      grid-gap: 0rem;
+      grid-gap: var(--padding--small);
     }
 
     /* FUNCTIONS */
@@ -111,40 +130,55 @@
     .Button {
       margin: 0;
       padding: 0;
-      background: #efefef;
+      border: none;
       position: relative;
-      /* width: 9rem;
-      height: 9rem; */
-      background: linear-gradient(#d9d9d9 0%, #d0d0d0 100%);
+      color: var(--color-text);
+      font-size: 1.6rem;
+      font-weight: 100;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      /* background: linear-gradient(#d9d9d9 0%, #d0d0d0 100%); */
+      background: transparent;
+      border-bottom: 4px solid;
+      border-bottom-color: transparent;
+    }
+
+    .Button:active {
+      background: var(--color_button--active);
     }
 
     .Button .content {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      align-content: center;
+      justify-content: center;
     }
 
     .Controls .Button,
     .Button--Recall,
     .Button--Store {
-      background: linear-gradient(#e8e8e8 0%, #dfdfdf 100%);
+      /* background: linear-gradient(#e8e8e8 0%, #dfdfdf 100%); */
     }
 
     .Button--active {
-      background: linear-gradient(#fff 0%, #e6e6e6 100%) !important;
+      /* background: linear-gradient(var(--color_button--active) 0%, var(--color_button--active) 100%) !important; */
+      border-bottom-color: var(--color-text);
     }
 
     .Button--active.Button--Play,
     .Button--active.Button--Stop,
     .Button--active.Button--Rewind,
     .Button--active.Button--FF {
-      background: linear-gradient(hsl(50, 90%, 80%) 0%, hsl(50, 90%, 75%) 100%) !important;
+
     }
 
     .Button--active.Button--Rec {
-      background: linear-gradient(hsl(0, 90%, 60%) 0%, hsl(0, 90%, 65%) 100%) !important;
-      color: white;
+
+
     }
 
     /* CONTROLS */
@@ -180,13 +214,24 @@
     }
 
     @media screen and (min-width: 768px) {
-      .Remote > div {
-        grid-gap: 0;
+      .Remote {
+        padding: var(--padding--medium);
+        grid-gap: var(--padding--medium);
       }
+
+      .Remote > div {
+        grid-gap: var(--padding--medium);
+      }
+
       .Counter {
-        padding: 2rem 4rem 4rem;
+        padding: var(--padding--medium) var(--padding--large) var(--padding--large);
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr;
+      }
+
+      .Socket {
+        top: var(--padding--medium);
+        right: var(--padding--medium);
       }
 
       .Counter__time {
@@ -198,16 +243,30 @@
         grid-template-rows: repeat(4, 1fr);
         grid-template-areas:
           "f f f f f n n n"
-          "f f f f f n n n"
-          "c c c c c n n n"
+          ". . . . . n n n"
+          ". . . . . n n n"
           "c c c c c n n n";
       }
     }
 
     @media screen and (min-width: 1024px) {
+      .Remote {
+        padding: var(--padding--large);
+        grid-gap: var(--padding--large);
+      }
+
+      .Remote > div {
+        grid-gap: var(--padding--large);
+      }
+
       .Counter {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr;
+      }
+
+      .Socket {
+        top: var(--padding--large);
+        right: var(--padding--large);
       }
     }
   </style>
@@ -224,6 +283,7 @@
         <span class="Counter__time" data-id="locate_time">09:03.4</span>
         <span class="Counter__indicator" data-id="locate_status">Locate Point 24</span>
       </div>
+      <span class="Socket" data-id="socket"></span>
     </div>
     <!-- COUNTER END -->
 
@@ -233,9 +293,8 @@
         <button class="Button Button--Reset" data-id="reset"><div class="content">Reset</div></button>
         <button class="Button Button--Rtz" data-id="rtz"><div class="content">RTZ</div></button>
         <button class="Button Button--Locate" data-id="locate"><div class="content">Loc</div></button>
-        <button class="Button Button--Current" data-id="current"><div class="content">Current</div></button>
+        <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
         <button class="Button Button--Speed" data-id="speed"><div class="content">Speed</div></button>
-        <!-- <button class="Button Button--Socket" data-id="connet"><div class="content">Connect</div></button> -->
 
         <!-- <button class="Button Button--AutoPunchOn" data-id="autopunch_on"><div class="content">AP On</div></button>
         <button class="Button Button--AutoPunchIn" data-id="autopunch_in"><div class="content">AP In</div></button>
@@ -261,18 +320,18 @@
         <button class="Button Button--2" data-id="key02"><div class="content">2</div></button>
         <button class="Button Button--1" data-id="key01"><div class="content">1</div></button>
         <button class="Button Button--Store" data-id="store"><div class="content">Store</div></button>
-        <button class="Button Button--0" data-id="key0"><div class="content">0</div></button>
+        <button class="Button Button--0" data-id="key00"><div class="content">0</div></button>
         <button class="Button Button--Recall" data-id="recall"><div class="content">Recall</div></button>
       </div>
       <!-- NUMPAD END -->
 
       <!-- CONTROLS START -->
       <div class="Controls">
-        <button class="Button Button--Rec" data-id="rec"><div class="content">Rec</div></button>
-        <button class="Button Button--Play" data-id="play"><div class="content">Play</div></button>
-        <button class="Button Button--Stop" data-id="stop"><div class="content">Stop</div></button>
-        <button class="Button Button--Rewind" data-id="rewind"><div class="content">Rew</div></button>
-        <button class="Button Button--FF" data-id="ff"><div class="content">FF</div></button>
+        <button class="Button Button--Rec" data-id="rec" data-cmd="rec/1"><div class="content">Rec</div></button>
+        <button class="Button Button--Play" data-id="play" data-cmd="play/1"><div class="content">Play</div></button>
+        <button class="Button Button--Stop" data-id="stop" data-cmd="stop/1"><div class="content">Stop</div></button>
+        <button class="Button Button--Rewind" data-id="rewind" data-cmd="rewind/1"><div class="content">Rew</div></button>
+        <button class="Button Button--FF" data-id="ff" data-cmd="ff/1"><div class="content">FF</div></button>
       </div>
       <!-- CONTROLS END -->
     </div>
@@ -298,15 +357,15 @@
         socket = new WebSocket('ws://localhost:9030', 'echo-protocol');
       }
 
-      ui.socket.innerHTML = 'Connecting';
+      setSocketStatus('Connecting');
 
       socket.onopen = function () {
         sendMessage('connection/1');
-        ui.socket.innerHTML = 'Disconnect';
+        setSocketStatus('Connected');
       };
 
       socket.onclose = function () {
-        ui.socket.innerHTML = 'Connect';
+        setSocketStatus('Connecting');
         socket.onopen = null;
         socket.onclose = null;
         socket.onmessage = null;
@@ -343,7 +402,7 @@
 
     var sendMessage = function (message) {
       if (!socket) return;
-
+      console.log('Sending', message);
       socket.send(`${message}$`);
     }
 
@@ -369,26 +428,35 @@
       */
 
       // Buttons events
-      ui.buttons.forEach(function(button) {
-        ['mousedown', 'touchstart', 'mouseup', 'touchend'].forEach( function(eventType) {
+      ui.controls.forEach(function(button) {
+        ['touchstart', 'mousedown'].forEach( function(eventType) {
           button.addEventListener(eventType, function(e) {
             e.preventDefault();
-
-            var isStart = ['mousedown', 'touchstart'].find(function(type) { return type === eventType });
-            isStart ? button.classList.add('Button--active') : button.classList.remove('Button--active');
-            var state = isStart ? '1' : '0';
-            var id = e.target.dataset.id;
-            sendMessage(`${id}/${state}`);
+            sendCommandFromElement(e.target.parentNode);
           }, false);
         });
       });
     }
 
+    var sendCommandFromElement = function(element) {
+      if (element && element.dataset) {
+        var command = element.dataset.cmd;
+        command && sendMessage(command);
+      }
+    }
+
+    var setSocketStatus = function(text) {
+      if (ui.socket) {
+        ui.socket.innerHTML = text;
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       ui = {
         buttons: document.querySelectorAll('.Button:not(.Button--Socket)'),
+        controls: document.querySelectorAll('.Controls .Button'),
         element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
-        socket: document.querySelector('.Button--Socket')
+        socket: document.querySelector('.Socket')
       };
 
       bindEvents();
