@@ -358,7 +358,7 @@
         rewind: false,
         ff: false
       },
-      playhead_time: 0,
+      playhead_time: 230.1,
       locate_time: false,
       locate_status: 0,
       speed: true
@@ -429,7 +429,11 @@
       socket.send(`${message}$`);
     }
 
-    const updateUiFromState = () => {
+    const updateUiFromState = nextState => {
+      if (nextState) {
+        state = nextState;
+      }
+
       updateControls();
       updatePlayhead();
       updatePlayheadStatus();
@@ -452,10 +456,10 @@
     }
 
     const updatePlayhead = () => {
-      if (!state.playhead) return;
+      if (!('playhead_time' in state)) return;
 
       const element = ui.element('playhead_time');
-      setTime(element, state.playhead);
+      setTime(element, state.playhead_time);
     }
 
     const updatePlayheadStatus = () => {
@@ -548,7 +552,7 @@
         ['touchstart', 'mousedown'].forEach( eventType => {
           button.addEventListener(eventType, e => {
             e.preventDefault();
-            const element = e.target.className.includes('Button') ? e.target : e.target.parentNode;
+            const element = getButtonElementFromEvent(e);
             sendCommandFromElement(element);
           }, false);
         });
@@ -559,12 +563,22 @@
         ['touchstart', 'mousedown'].forEach( eventType => {
           button.addEventListener(eventType, e => {
             e.preventDefault();
-            const element = e.target.className.includes('Button') ? e.target : e.target.parentNode;
+            const element = getButtonElementFromEvent(e);
             handleNumButton(element);
           }, false);
         });
       });
+
+      // Current button events
+      ['touchstart', 'mousedown'].forEach( eventType => {
+        ui.currentButton.addEventListener(eventType, e => {
+          e.preventDefault();
+          handleCurrentButton();
+        }, false);
+      });
     }
+
+    const getButtonElementFromEvent = e => e.target.className.includes('Button') ? e.target : e.target.parentNode;
 
     const sendCommandFromElement = element => {
       if (element && element.dataset) {
@@ -588,12 +602,19 @@
       updateLocateFromArray();
     }
 
+    const handleCurrentButton = () => {
+      if (!('playhead_time' in state)) return;
+
+      const element = ui.element('locate_time');
+      setTime(element, state.playhead_time);
+    }
+
     const setSocketStatus = text => {
       updateElement(ui.socket, text);
     }
 
     const setTime = (element, time) => {
-      if (!parseInt(time)) return;
+      if (!parseInt(time) && time != 0) return;
       updateElement(element, formatTime(time));
     }
 
@@ -610,14 +631,14 @@
       const seconds = Math.floor(time % 60);
       const decimal = (time % 1).toFixed(1).substring(2);
 
-      return formatTimeString(parNumber(minutes), padNubmber(seconds), decimal);
+      return formatTimeString(padNumber(minutes), padNumber(seconds), decimal);
     }
 
     const formatTimeString = (minutes, seconds, decimal) => {
       return `${minutes}:${seconds}.${decimal}`;
     }
 
-    const padNumbar = number => {
+    const padNumber = number => {
       const s = `0${number}`;
       return s.substr(s.length - 2);
     }
@@ -637,6 +658,7 @@
         commandButtons: document.querySelectorAll('.Command'),
         element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
         numButtons: document.querySelectorAll('.Button--num'),
+        currentButton: document.querySelector('.Button--Current'),
         socket: document.querySelector('.Socket')
       };
 
