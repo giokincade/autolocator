@@ -300,7 +300,7 @@
     <div class="Remote">
       <!-- FUNCTIONS START -->
       <div class="Functions">
-        <button class="Button Button--Reset" data-id="reset"><div class="content">Reset</div></button>
+        <button class="Button Button--Reset Command" data-id="reset" data-cmd="reset/1"><div class="content">Reset</div></button>
         <button class="Button Button--Rtz Command" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
         <button class="Button Button--Locate Command" data-id="locate"><div class="content">Loc</div></button>
         <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
@@ -358,7 +358,7 @@
         rewind: false,
         ff: false
       },
-      playhead_time: 230.1,
+      playhead_time: 130.1,
       locate_time: false,
       locate_status: 0,
       speed: true
@@ -457,9 +457,7 @@
 
     const updatePlayhead = () => {
       if (!('playhead_time' in state)) return;
-
-      const element = ui.element('playhead_time');
-      setTime(element, state.playhead_time);
+      setTime(ui.playheadTime, state.playhead_time);
     }
 
     const updatePlayheadStatus = () => {
@@ -488,18 +486,13 @@
         status = 'Fast Forwarding';
       }
 
-      const element = ui.element('playhead_status');
-
-      updateElement(element, status);
+      updateElement(ui.playheadStatus, status);
     }
 
-    const updateLocateFromTime = time => {
-      const element = ui.element('locate_time');
-      setTime(element, time);
-    }
+    const updateLocateFromTime = time => setTime(ui.locateTime, time);
 
     const updateLocateFromArray = () => {
-      const element = ui.element('locate_time');
+      const element = ui.locateTime;
 
       const minutes = locate.slice(0, 2).join('');
       const seconds = locate.slice(2, 4).join('');
@@ -518,9 +511,7 @@
 
     const updateLocateStatus = () => {
       if (!state.locate_status || !parseInt(state.locate_status)) return;
-
-      const element = ui.element('locate_status');
-      updateElement(element, `LOCATE POINT ${parseInt(state.locate_status)}`);
+      updateElement(ui.locateStatus, `LOCATE POINT ${parseInt(state.locate_status)}`);
     }
 
     const updateLocateCommands = time => {
@@ -559,6 +550,9 @@
             e.preventDefault();
             const element = getButtonElementFromEvent(e);
             sendCommandFromElement(element);
+
+            // reset locateIndex
+            locateIndex = 0;
           }, false);
         });
       });
@@ -613,8 +607,7 @@
       const time = state.playhead_time;
 
       // set locate html
-      const element = ui.element('locate_time');
-      setTime(element, time);
+      setTime(ui.locateTime, time);
 
       // set locate button commands
       updateLocateCommands(time);
@@ -687,11 +680,17 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const getElement = id => document.querySelector(`[data-id="${id}"]`);
+
       ui = {
         commandButtons: document.querySelectorAll('.Command'),
-        element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
-        numButtons: document.querySelectorAll('.Button--num'),
         currentButton: document.querySelector('.Button--Current'),
+        element: id => getElement(id),
+        locateTime: getElement('locate_time'),
+        locateStatus: getElement('locate_status'),
+        numButtons: document.querySelectorAll('.Button--num'),
+        playheadTime: getElement('playhead_time'),
+        playheadStatus: getElement('playhead_status'),
         socket: document.querySelector('.Socket')
       };
 
