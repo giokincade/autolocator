@@ -68,6 +68,12 @@
       width: 100vw;
     }
 
+    .Counter__section {
+      display: grid;
+      align-self: start;
+      min-width: 40rem;
+    }
+
     .Counter__time,
     .Counter__indicator {
       display: block;
@@ -281,12 +287,12 @@
     <!-- COUNTER START -->
     <div class="Counter">
       <div class="Counter__section">
-        <span class="Counter__time" data-id="playhead_time">09:47.2</span>
-        <span class="Counter__indicator" data-id="playhead_status">Playing</span>
+        <span class="Counter__time" data-id="playhead">09:47.2</span>
+        <span class="Counter__indicator" data-id="playhead_status"> </span>
       </div>
       <div class="Counter__section">
-        <span class="Counter__time" data-id="locate_time">09:03.4</span>
-        <span class="Counter__indicator" data-id="locate_status">Locate Point 24</span>
+        <span class="Counter__time" data-id="locate">00:00.0</span>
+        <span class="Counter__indicator" data-id="locate_status"></span>
       </div>
     </div>
     <!-- COUNTER END -->
@@ -295,7 +301,7 @@
       <!-- FUNCTIONS START -->
       <div class="Functions">
         <button class="Button Button--Reset" data-id="reset"><div class="content">Reset</div></button>
-        <button class="Button Button--Rtz" data-id="rtz"><div class="content">RTZ</div></button>
+        <button class="Button Button--Rtz" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
         <button class="Button Button--Locate" data-id="locate"><div class="content">Loc</div></button>
         <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
         <button class="Button Button--Speed" data-id="speed"><div class="content">Speed</div></button>
@@ -314,17 +320,17 @@
 
       <!-- NUMPAD START -->
       <div class="Numpad">
-        <button class="Button Button--9" data-id="key09"><div class="content">9</div></button>
-        <button class="Button Button--8" data-id="key08"><div class="content">8</div></button>
-        <button class="Button Button--7" data-id="key07"><div class="content">7</div></button>
-        <button class="Button Button--6" data-id="key06"><div class="content">6</div></button>
-        <button class="Button Button--5" data-id="key05"><div class="content">5</div></button>
-        <button class="Button Button--4" data-id="key04"><div class="content">4</div></button>
-        <button class="Button Button--3" data-id="key03"><div class="content">3</div></button>
-        <button class="Button Button--2" data-id="key02"><div class="content">2</div></button>
-        <button class="Button Button--1" data-id="key01"><div class="content">1</div></button>
+        <button class="Button Button--9" data-id="9"><div class="content">9</div></button>
+        <button class="Button Button--8" data-id="8"><div class="content">8</div></button>
+        <button class="Button Button--7" data-id="7"><div class="content">7</div></button>
+        <button class="Button Button--6" data-id="6"><div class="content">6</div></button>
+        <button class="Button Button--5" data-id="5"><div class="content">5</div></button>
+        <button class="Button Button--4" data-id="4"><div class="content">4</div></button>
+        <button class="Button Button--3" data-id="3"><div class="content">3</div></button>
+        <button class="Button Button--2" data-id="2"><div class="content">2</div></button>
+        <button class="Button Button--1" data-id="1"><div class="content">1</div></button>
         <button class="Button Button--Store" data-id="store"><div class="content">Store</div></button>
-        <button class="Button Button--0" data-id="key00"><div class="content">0</div></button>
+        <button class="Button Button--0" data-id="0"><div class="content">0</div></button>
         <button class="Button Button--Recall" data-id="recall"><div class="content">Recall</div></button>
       </div>
       <!-- NUMPAD END -->
@@ -341,13 +347,26 @@
     </div>
   </div>
   <script>
-    var isPhp = parseInt('<?echo "1"; ?>') === 1;
-    var ui;
-    var socket;
+    const isPhp = parseInt('<?echo "1"; ?>') === 1;
+    let ui;
+    let socket;
+    let state = {
+      controls: {
+        rec: false,
+        play: true,
+        stop: false,
+        rewind: false,
+        ff: false
+      },
+      playhead: 123,
+      locate: 412,
+      locate_status: 23,
+      speed: true
+    };
 
-    var connectSocket = function () {
+    const connectSocket = () => {
       if (isPhp) {
-        var host = '<?echo _SERVER("HTTP_HOST")?>';
+        const host = '<?echo _SERVER("HTTP_HOST")?>';
 
         if ((navigator.platform.indexOf("Win") != -1) && (host.charAt(0) == "[")) {
           // network resource identifier to UNC path name conversion
@@ -363,12 +382,12 @@
 
       setSocketStatus('Connecting');
 
-      socket.onopen = function () {
+      socket.onopen = () => {
         sendMessage('connection/1');
         setSocketStatus('Connected');
       };
 
-      socket.onclose = function () {
+      socket.onclose = () => {
         setSocketStatus('Connecting');
         socket.onopen = null;
         socket.onclose = null;
@@ -376,65 +395,114 @@
         socket = null;
       }
 
-      socket.onerror = function (error) {
+      socket.onerror = error => {
         console.log('WebSocket Error', error);
         connectSocket();
       };
 
-      socket.onmessage = function (e) {
+      socket.onmessage = e => {
         if (e.data.indexOf('$') > -1) {
-          var message = e.data.substring(0, e.data.length - 1);
-          recieveMessage(message);
+          const nextState = e.data.substring(0, e.data.length - 1);
+          updateUiFromState(nextState);
         }
       };
     }
 
-    var disconnectSocket = function() {
+    const disconnectSocket = () => {
       sendMessage('connection/0');
       socket && socket.close();
     }
 
-    var recieveMessage = function (message) {
+    const recieveMessage = message => {
       if (message.indexOf('/') > -1) {
-        var parts = message.split('/');
-        var element = ui.element(parts[0]);
-        if (element) {
-          element.innerHTML = parts[1];
-        }
+        const parts = message.split('/');
+        const element = ui.element(parts[0]);
+        updateElement(parts[1]);
       }
     }
 
-    var sendMessage = function (message) {
+    const sendMessage = message => {
       if (!socket) return;
       console.log('Sending', message);
       socket.send(`${message}$`);
     }
 
-    var bindEvents = function () {
-      // Window close
+    const updateUiFromState = () => {
+      updateControls();
+      updatePlayhead();
+      updatePlayheadStatus();
+      updateLocateStatus();
+    }
+
+    const updateControls = () => {
+      if (!state.controls) return;
+
+      Object.keys(state.controls).forEach(key => {
+        const element = ui.element(key);
+        const isActive = state.controls[key];
+
+        if (element) {
+          element.classList.remove('Button--active');
+          isActive && element.classList.add('Button--active');
+        }
+      });
+    }
+
+    const updatePlayhead = () => {
+      if (!state.playhead) return;
+
+      const element = ui.element('playhead');
+      setTime(element, state.playhead);
+    }
+
+    const updatePlayheadStatus = () => {
+      if (!state.controls) return;
+
+      let status;
+      const { rec, play, stop, rewind, ff } = state.controls;
+
+      if (!rec && !play && stop && !rewind && !ff) {
+        status = 'Stopped';
+      }
+
+      if (rec && play && !stop && !rewind && !ff) {
+        status = 'Recording';
+      }
+
+      if (!rec && play && !stop && !rewind && !ff) {
+        status = 'Playing';
+      }
+
+      if (!rec && !play && !stop && rewind && !ff) {
+        status = 'Rewinding';
+      }
+
+      if (!rec && !play && !stop && !rewind && ff) {
+        status = 'Fast Forwarding';
+      }
+
+      const element = ui.element('playhead_status');
+
+      updateElement(element, status);
+    }
+
+    const updateLocateStatus = () => {
+      if (!state.locate_status || !parseInt(state.locate_status)) return;
+
+      const element = ui.element('locate_status');
+      updateElement(element, `LOCATE POINT ${parseInt(state.locate_status)}`);
+    }
+
+    const bindEvents = () => {
+      // Disconnect from socket on window/tab close
       window.addEventListener('onbeforeunload', function() {
         disconnectSocket();
       });
 
-      /*
-      // Socket connection events
-      ['mousedown', 'touchstart'].forEach(function(eventType) {
-        ui.socket.addEventListener(eventType, function(e) {
-          e.preventDefault();
-
-          if (!socket) {
-            connectSocket();
-          } else {
-            disconnectSocket();
-          }
-        });
-      });
-      */
-
-      // Buttons events
-      ui.controls.forEach(function(button) {
-        ['touchstart', 'mousedown'].forEach( function(eventType) {
-          button.addEventListener(eventType, function(e) {
+      // Control button events
+      ui.controls.forEach(button => {
+        ['touchstart', 'mousedown'].forEach( eventType => {
+          button.addEventListener(eventType, e => {
             e.preventDefault();
             sendCommandFromElement(e.target.parentNode);
           }, false);
@@ -442,20 +510,40 @@
       });
     }
 
-    var sendCommandFromElement = function(element) {
+    const sendCommandFromElement = element => {
       if (element && element.dataset) {
-        var command = element.dataset.cmd;
+        const command = element.dataset.cmd;
         command && sendMessage(command);
       }
     }
 
-    var setSocketStatus = function(text) {
-      if (ui.socket) {
-        ui.socket.innerHTML = text;
-      }
+    const setSocketStatus = text => {
+      updateElement(ui.socket, text);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    const setTime = (element, time) => {
+      updateElement(element, formatTime(time));
+    }
+
+    const formatTime = time => {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      const decimal = (time % 1).toFixed(1).substring(2);
+
+      return `${padNumbar(minutes)}:${padNumbar(seconds)}.${decimal}`;
+    }
+
+    const padNumbar = number => {
+      const s = `0${number}`;
+      return s.substr(s.length - 2);
+    }
+
+    const updateElement = (element, html) => {
+      if (!element) return;
+      element.innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       ui = {
         buttons: document.querySelectorAll('.Button:not(.Button--Socket)'),
         controls: document.querySelectorAll('.Controls .Button'),
@@ -468,6 +556,8 @@
       if (!socket) {
         connectSocket();
       }
+
+      updateUiFromState();
     }, false);
   </script>
 </body>
