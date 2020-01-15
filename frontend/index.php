@@ -287,11 +287,11 @@
     <!-- COUNTER START -->
     <div class="Counter">
       <div class="Counter__section">
-        <span class="Counter__time" data-id="playhead">09:47.2</span>
+        <span class="Counter__time" data-id="playhead_time">09:47.2</span>
         <span class="Counter__indicator" data-id="playhead_status"> </span>
       </div>
       <div class="Counter__section">
-        <span class="Counter__time" data-id="locate">00:00.0</span>
+        <span class="Counter__time" data-id="locate_time">00:00.0</span>
         <span class="Counter__indicator" data-id="locate_status"></span>
       </div>
     </div>
@@ -301,10 +301,10 @@
       <!-- FUNCTIONS START -->
       <div class="Functions">
         <button class="Button Button--Reset" data-id="reset"><div class="content">Reset</div></button>
-        <button class="Button Button--Rtz" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
-        <button class="Button Button--Locate" data-id="locate"><div class="content">Loc</div></button>
+        <button class="Button Button--Rtz Command" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
+        <button class="Button Button--Locate Command" data-id="locate"><div class="content">Loc</div></button>
         <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
-        <button class="Button Button--Speed" data-id="speed"><div class="content">Speed</div></button>
+        <button class="Button Button--Speed Command" data-id="speed"><div class="content">Speed</div></button>
 
         <!-- <button class="Button Button--AutoPunchOn" data-id="autopunch_on"><div class="content">AP On</div></button>
         <button class="Button Button--AutoPunchIn" data-id="autopunch_in"><div class="content">AP In</div></button>
@@ -320,28 +320,28 @@
 
       <!-- NUMPAD START -->
       <div class="Numpad">
-        <button class="Button Button--9" data-id="9"><div class="content">9</div></button>
-        <button class="Button Button--8" data-id="8"><div class="content">8</div></button>
-        <button class="Button Button--7" data-id="7"><div class="content">7</div></button>
-        <button class="Button Button--6" data-id="6"><div class="content">6</div></button>
-        <button class="Button Button--5" data-id="5"><div class="content">5</div></button>
-        <button class="Button Button--4" data-id="4"><div class="content">4</div></button>
-        <button class="Button Button--3" data-id="3"><div class="content">3</div></button>
-        <button class="Button Button--2" data-id="2"><div class="content">2</div></button>
-        <button class="Button Button--1" data-id="1"><div class="content">1</div></button>
-        <button class="Button Button--Store" data-id="store"><div class="content">Store</div></button>
-        <button class="Button Button--0" data-id="0"><div class="content">0</div></button>
-        <button class="Button Button--Recall" data-id="recall"><div class="content">Recall</div></button>
+        <button class="Button Button--num" data-id="9"><div class="content">9</div></button>
+        <button class="Button Button--num" data-id="8"><div class="content">8</div></button>
+        <button class="Button Button--num" data-id="7"><div class="content">7</div></button>
+        <button class="Button Button--num" data-id="6"><div class="content">6</div></button>
+        <button class="Button Button--num" data-id="5"><div class="content">5</div></button>
+        <button class="Button Button--num" data-id="4"><div class="content">4</div></button>
+        <button class="Button Button--num" data-id="3"><div class="content">3</div></button>
+        <button class="Button Button--num" data-id="2"><div class="content">2</div></button>
+        <button class="Button Button--num" data-id="1"><div class="content">1</div></button>
+        <button class="Button Button--Store Command" data-id="store"><div class="content">Store</div></button>
+        <button class="Button Button--num" data-id="0"><div class="content">0</div></button>
+        <button class="Button Button--Recall Command" data-id="recall"><div class="content">Recall</div></button>
       </div>
       <!-- NUMPAD END -->
 
       <!-- CONTROLS START -->
       <div class="Controls">
-        <button class="Button Button--Rec" data-id="rec" data-cmd="rec/1"><div class="content">Rec</div></button>
-        <button class="Button Button--Play" data-id="play" data-cmd="play/1"><div class="content">Play</div></button>
-        <button class="Button Button--Stop" data-id="stop" data-cmd="stop/1"><div class="content">Stop</div></button>
-        <button class="Button Button--Rewind" data-id="rewind" data-cmd="rewind/1"><div class="content">Rew</div></button>
-        <button class="Button Button--FF" data-id="ff" data-cmd="ff/1"><div class="content">FF</div></button>
+        <button class="Button Button--Rec Command" data-id="rec" data-cmd="rec/1"><div class="content">Rec</div></button>
+        <button class="Button Button--Play Command" data-id="play" data-cmd="play/1"><div class="content">Play</div></button>
+        <button class="Button Button--Stop Command" data-id="stop" data-cmd="stop/1"><div class="content">Stop</div></button>
+        <button class="Button Button--Rewind Command" data-id="rewind" data-cmd="rewind/1"><div class="content">Rew</div></button>
+        <button class="Button Button--FF Command" data-id="ff" data-cmd="ff/1"><div class="content">FF</div></button>
       </div>
       <!-- CONTROLS END -->
     </div>
@@ -353,16 +353,18 @@
     let state = {
       controls: {
         rec: false,
-        play: true,
+        play: false,
         stop: false,
         rewind: false,
         ff: false
       },
-      playhead: 123,
-      locate: 412,
-      locate_status: 23,
+      playhead_time: 0,
+      locate_time: false,
+      locate_status: 0,
       speed: true
     };
+    let locate = [0, 1, 0, 0, 0];
+    let locateIndex = 0;
 
     const connectSocket = () => {
       if (isPhp) {
@@ -432,6 +434,7 @@
       updatePlayhead();
       updatePlayheadStatus();
       updateLocateStatus();
+      updateSpeed();
     }
 
     const updateControls = () => {
@@ -451,14 +454,14 @@
     const updatePlayhead = () => {
       if (!state.playhead) return;
 
-      const element = ui.element('playhead');
+      const element = ui.element('playhead_time');
       setTime(element, state.playhead);
     }
 
     const updatePlayheadStatus = () => {
       if (!state.controls) return;
 
-      let status;
+      let status = '';
       const { rec, play, stop, rewind, ff } = state.controls;
 
       if (!rec && !play && stop && !rewind && !ff) {
@@ -486,11 +489,52 @@
       updateElement(element, status);
     }
 
+    const updateLocateFromTime = time => {
+      const element = ui.element('locate_time');
+      setTime(element, time);
+    }
+
+    const updateLocateFromArray = () => {
+      const element = ui.element('locate_time');
+
+      const minutes = locate.slice(0, 2).join('');
+      const seconds = locate.slice(2, 4).join('');
+      const decimal = locate.slice(4);
+
+      const value = formatTimeString(minutes, seconds, decimal);
+
+      updateElement(element, value);
+
+      // get locate time as int
+      const locateTime = timeFromLocateArray();
+
+      // update store locate command
+      const storeElement = ui.element('store');
+      const storeCommand = `store/${locateTime}`;
+      updateElementCommand(storeElement, storeCommand);
+
+      // update locate command
+      const locateElement = ui.element('locate');
+      const locateCommand = `locate/${locateTime}`;
+      updateElementCommand(locateElement, locateCommand);
+    }
+
     const updateLocateStatus = () => {
       if (!state.locate_status || !parseInt(state.locate_status)) return;
 
       const element = ui.element('locate_status');
       updateElement(element, `LOCATE POINT ${parseInt(state.locate_status)}`);
+    }
+
+    const updateSpeed = () => {
+      if (!('speed' in state)) return;
+
+      const element = ui.element('speed');
+      const speedContent = state.speed ? 'SPEED (HIGH)' : 'SPEED (LOW)';
+      const speedCommand = state.speed ? 'speed/0' : 'speed/1';
+
+      updateElement(element, speedContent);
+      updateElementCommand(element, speedCommand);
     }
 
     const bindEvents = () => {
@@ -499,12 +543,24 @@
         disconnectSocket();
       });
 
-      // Control button events
-      ui.controls.forEach(button => {
+      // Command button events
+      ui.commandButtons.forEach(button => {
         ['touchstart', 'mousedown'].forEach( eventType => {
           button.addEventListener(eventType, e => {
             e.preventDefault();
-            sendCommandFromElement(e.target.parentNode);
+            const element = e.target.className.includes('Button') ? e.target : e.target.parentNode;
+            sendCommandFromElement(element);
+          }, false);
+        });
+      });
+
+      // Num button events
+      ui.numButtons.forEach(button => {
+        ['touchstart', 'mousedown'].forEach( eventType => {
+          button.addEventListener(eventType, e => {
+            e.preventDefault();
+            const element = e.target.className.includes('Button') ? e.target : e.target.parentNode;
+            handleNumButton(element);
           }, false);
         });
       });
@@ -517,12 +573,36 @@
       }
     }
 
+    const handleNumButton = element => {
+      if (!element) return;
+
+      const digit = parseInt(element.dataset.id);
+
+      // add digit array at current index
+      locate[locateIndex] = digit;
+
+      // update index
+      locateIndex = locateIndex === 4 ? 0 : locateIndex + 1;
+
+      // update locate html
+      updateLocateFromArray();
+    }
+
     const setSocketStatus = text => {
       updateElement(ui.socket, text);
     }
 
     const setTime = (element, time) => {
+      if (!parseInt(time)) return;
       updateElement(element, formatTime(time));
+    }
+
+    const timeFromLocateArray = () => {
+      const minutes = parseInt(locate.slice(0, 2).join(''));
+      const seconds = parseInt(locate.slice(2, 4).join(''));
+      const decimal = parseInt(locate.slice(4));
+
+      return minutes * 60 + seconds +  decimal / 10;
     }
 
     const formatTime = time => {
@@ -530,7 +610,11 @@
       const seconds = Math.floor(time % 60);
       const decimal = (time % 1).toFixed(1).substring(2);
 
-      return `${padNumbar(minutes)}:${padNumbar(seconds)}.${decimal}`;
+      return formatTimeString(parNumber(minutes), padNubmber(seconds), decimal);
+    }
+
+    const formatTimeString = (minutes, seconds, decimal) => {
+      return `${minutes}:${seconds}.${decimal}`;
     }
 
     const padNumbar = number => {
@@ -543,21 +627,29 @@
       element.innerHTML = html;
     }
 
+    const updateElementCommand = (element, command) => {
+      if (!element || !command) return;
+      element.dataset.cmd = command;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       ui = {
-        buttons: document.querySelectorAll('.Button:not(.Button--Socket)'),
-        controls: document.querySelectorAll('.Controls .Button'),
+        commandButtons: document.querySelectorAll('.Command'),
         element: function(id) { return document.querySelector(`[data-id="${id}"]`); },
+        numButtons: document.querySelectorAll('.Button--num'),
         socket: document.querySelector('.Socket')
       };
 
+      updateUiFromState();
+
       bindEvents();
+
+      updateLocateFromArray();
 
       if (!socket) {
         connectSocket();
       }
 
-      updateUiFromState();
     }, false);
   </script>
 </body>
