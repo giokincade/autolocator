@@ -49,6 +49,7 @@
       display: grid;
       grid-template-rows: 2fr 3fr;
       height: 100vh;
+      position: relative;
     }
 
     /* COUNTER */
@@ -85,6 +86,10 @@
       top: var(--padding--small);
       right: var(--padding--small);
       text-transform: uppercase;
+      font-family: 'Segment';
+      font-size: 1.6rem;
+      color: var(--color_counter);
+      z-index: 1;
     }
 
     /* REMOTE */
@@ -224,7 +229,7 @@
       }
 
       .Counter {
-        padding: var(--padding--medium) var(--padding--large) var(--padding--large);
+        padding: var(--padding--large);
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr;
       }
@@ -265,14 +270,14 @@
       }
 
       .Socket {
-        top: var(--padding--large);
-        right: var(--padding--large);
       }
     }
   </style>
 </head>
 <body>
   <div class="Container">
+    <span class="Socket" data-id="socket"></span>
+
     <!-- COUNTER START -->
     <div class="Counter">
       <div class="Counter__section">
@@ -283,7 +288,6 @@
         <span class="Counter__time" data-id="locate_time">09:03.4</span>
         <span class="Counter__indicator" data-id="locate_status">Locate Point 24</span>
       </div>
-      <span class="Socket" data-id="socket"></span>
     </div>
     <!-- COUNTER END -->
 
