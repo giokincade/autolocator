@@ -14,5 +14,5 @@ ws.on('connection', function(w){
     console.log('closing connection');
   });
 
-  var interval = setInterval(() => w.send(`counter/${Date.now()}$`), 1);
+  // var interval = setInterval(() => w.send(`counter/${Date.now()}$`), 1);
 });
