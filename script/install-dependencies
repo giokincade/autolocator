@@ -34,20 +34,16 @@ then
 fi
 
 # Install Arduino Dependencies
-if [[ ! $(arduino-cli lib list | grep "ArduinoUnit") ]]
-then
-    echo "Installing Arduino Unit"
-    arduino-cli lib update-index
-    arduino-cli lib install ArduinoUnit
-fi
-
-# Install OSC
-if [[ ! $(arduino-cli lib list | grep "OSC") ]]
-then
-    echo "Installing Arduino Unit"
-    arduino-cli lib update-index
-    arduino-cli lib install PHPoC
-fi
-
+arduino-cli lib update-index
+libs=("ArduinoUnit", "OSC", "ArduinoJson")
+for lib in ${libs[@]}; do
+    if [[ ! $(arduino-cli lib list | grep "$lib") ]]
+    then
+        echo "Installing $lib"
+        arduino-cli lib install ArduinoUnit
+    else
+        echo "Skipping $lib"
+    fi
+done
 
 echo "All done!"
