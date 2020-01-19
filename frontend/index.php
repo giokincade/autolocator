@@ -365,8 +365,8 @@
         rewind: false,
         ff: false
       },
-      playhead_time: 130.1,
-      locate_time: 12.5,
+      playhead_time: false,
+      locate_time: false,
       speed: true
     };
     let locate = [0, 1, 0, 0, 0];
@@ -415,7 +415,13 @@
       socket.onmessage = e => {
         if (e.data.indexOf('$') > -1) {
           const nextState = e.data.substring(0, e.data.length - 1);
-          updateUiFromState(nextState);
+          try {
+            const parsedState = JSON.parse(nextState);
+            updateUiFromState(parsedState);
+          } catch (e) {
+            console.log(e);
+            updateUiFromState(nextState);
+          }
         }
       };
     }
