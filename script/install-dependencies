@@ -35,12 +35,12 @@ fi
 
 # Install Arduino Dependencies
 arduino-cli lib update-index
-libs=("ArduinoUnit", "OSC", "ArduinoJson")
+libs=("ArduinoUnit" "OSC" "ArduinoJson" "PHPoC")
 for lib in ${libs[@]}; do
     if [[ ! $(arduino-cli lib list | grep "$lib") ]]
     then
         echo "Installing $lib"
-        arduino-cli lib install ArduinoUnit
+        arduino-cli lib install $lib
     else
         echo "Skipping $lib"
     fi

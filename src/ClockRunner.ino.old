@@ -30,7 +30,6 @@ static void handleTachPulse() {
 
 void loop()
 {
-
     Serial.println(clock.isMovingForward() ? "forwards" : "backwards");
     Serial.println(clock.getTime());
     Serial.println(clock.getRotationsFromStart());

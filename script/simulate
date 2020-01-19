@@ -1,9 +1,0 @@
-#! /bin/bash
-set -e
-
-source script/env
-assertBoardConnected
-
-arduino-cli compile --fqbn $FQBN --output bin/Simulate.hex 'src/Simulate.ino'
-arduino-cli upload --fqbn $FQBN --port $DEVICE --verbose --input bin/Simulate.hex
-head -3 $DEVICE
