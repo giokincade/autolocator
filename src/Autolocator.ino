@@ -1,23 +1,30 @@
 #include "Arduino.h"
-#include "Socket.h"
 #include "Clock.h"
 #include "State.h"
+#include <Phpoc.h>
 
 #ifndef Autolocator_ino
 #define Autolocator_ino
 
-Socket socket = Socket("autolocator");
 
 static const int pulseInputPin = 2;
 static const int directionInputPin = A0;
 
 static Clock clock = Clock(directionInputPin, 40.0);
 
+PhpocServer server(80);
+boolean alreadyConnected = false;
+
+
 void setup() {
     Serial.begin(9600);
     while(!Serial);
 
-    socket.setup(&Serial);
+    Phpoc.begin(PF_LOG_SPI | PF_LOG_NET);
+    server.beginWebSocket("autolocator");
+
+    Serial.print("Chat server address : ");
+    Serial.println(Phpoc.localIP());
 
     pinMode(pulseInputPin, INPUT_PULLUP);
     attachInterrupt(
@@ -37,15 +44,32 @@ static void handleTachPulse() {
 
 
 void loop() {
-    processMessage(socket.read());
+    processMessage();
 }
 
-void processMessage(String message) {
-    if (message.length() <= 0) return;
-    Serial.println(message);
-    State state = State(clock);
-    String json = state.toJson();
-    socket.write(json.c_str());
-    Serial.println(json);
+void processMessage() {
+    PhpocClient client = server.available();
+
+    if (client) {
+        Serial.println("boom");
+        if (!alreadyConnected) {
+            // clear out the transmission buffer:
+            client.flush();
+            Serial.println("We have a new client");
+            client.println("Hello, client!");
+            alreadyConnected = true;
+        }
+
+        if (client.available() > 0) {
+            // read the bytes incoming from the client:
+            char thisChar = client.read();
+
+            String json = State(clock).toJson();
+            char* jsonCstr = json.c_str();
+            server.write(jsonCstr, json.length());
+            // echo the bytes to the server as well:
+            Serial.write(jsonCstr);
+        }
+    }
 }
 #endif
