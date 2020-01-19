@@ -85,6 +85,7 @@
 
     .Counter__indicator {
       font-size: 3rem;
+      min-height: 3rem;
     }
 
     .Socket {
@@ -329,9 +330,9 @@
         <button class="Button Button--num" data-id="3"><div class="content">3</div></button>
         <button class="Button Button--num" data-id="2"><div class="content">2</div></button>
         <button class="Button Button--num" data-id="1"><div class="content">1</div></button>
-        <button class="Button Button--Store Command" data-id="store"><div class="content">Store</div></button>
+        <button class="Button Button--Store" data-id="store"><div class="content">Store</div></button>
         <button class="Button Button--num" data-id="0"><div class="content">0</div></button>
-        <button class="Button Button--Recall Command" data-id="recall"><div class="content">Recall</div></button>
+        <button class="Button Button--Recall" data-id="recall"><div class="content">Recall</div></button>
       </div>
       <!-- NUMPAD END -->
 
@@ -348,6 +349,11 @@
   </div>
   <script>
     const isPhp = parseInt('<?echo "1"; ?>') === 1;
+    const numKeyStates = {
+      INPUT: 'input',
+      RECALL: 'recall',
+      STORE: 'store'
+    }
     let ui;
     let socket;
     let state = {
@@ -359,12 +365,14 @@
         ff: false
       },
       playhead_time: 130.1,
-      locate_time: false,
-      locate_status: 0,
       speed: true
     };
     let locate = [0, 1, 0, 0, 0];
     let locateIndex = 0;
+
+    let numKeyState = numKeyStates.INPUT;
+    let locateAddress = [];
+    let locateAddressIndex = 0;
 
     const connectSocket = () => {
       if (isPhp) {
@@ -437,7 +445,6 @@
       updateControls();
       updatePlayhead();
       updatePlayheadStatus();
-      updateLocateStatus();
       updateSpeed();
     }
 
@@ -509,11 +516,6 @@
       updateLocateCommands(locateTime);
     }
 
-    const updateLocateStatus = () => {
-      if (!state.locate_status || !parseInt(state.locate_status)) return;
-      updateElement(ui.locateStatus, `LOCATE POINT ${parseInt(state.locate_status)}`);
-    }
-
     const updateLocateCommands = time => {
       // update store locate command
       const storeElement = ui.element('store');
@@ -575,6 +577,22 @@
           handleCurrentButton();
         }, false);
       });
+
+      // Store button events
+      ['touchstart', 'mousedown'].forEach( eventType => {
+        ui.storeButton.addEventListener(eventType, e => {
+          e.preventDefault();
+          handleStoreButton();
+        }, false);
+      });
+
+      // Recall button events
+      ['touchstart', 'mousedown'].forEach( eventType => {
+        ui.recallButton.addEventListener(eventType, e => {
+          e.preventDefault();
+          handleRecallButton();
+        }, false);
+      });
     }
 
     const getButtonElementFromEvent = e => e.target.className.includes('Button') ? e.target : e.target.parentNode;
@@ -591,6 +609,22 @@
 
       const digit = parseInt(element.dataset.id);
 
+      const { INPUT, RECALL, STORE } = numKeyStates;
+
+      if (numKeyState === INPUT) {
+        handleNumInput(digit);
+      }
+
+      if (numKeyState === RECALL) {
+        handleStoreAndRecall(digit);
+      }
+
+      if (numKeyState === STORE) {
+        handleStoreAndRecall(digit);
+      }
+    }
+
+    const handleNumInput = digit => {
       // add digit array at current index
       locate[locateIndex] = digit;
 
@@ -599,6 +633,34 @@
 
       // update locate html
       updateLocateFromArray();
+    }
+
+    handleStoreAndRecall = digit => {
+      // add digit array at current index
+      locateAddress[locateAddressIndex] = digit;
+
+      // update index
+      locateAddressIndex++;
+
+      // update locate html
+      updateLocateAddressFromArray();
+
+      if (locateAddress.length === 2) {
+        // send command
+        const address = locateAddress.join('');
+        const time = numKeyState === numKeyStates.STORE ? `,${timeFromArray(locate)}` : '';
+        const command = `${numKeyState}/${address}${time}`;
+        sendMessage(command);
+
+        // reset
+        locateAddressIndex = 0;
+        locateAddress = [];
+        numKeyState = numKeyStates.INPUT;
+
+        ui.recallButton.classList.remove('Button--active');
+        ui.storeButton.classList.remove('Button--active');
+        setTimeout(() => { updateElement(ui.locateStatus, ''); }, 150);
+      }
     }
 
     const handleCurrentButton = () => {
@@ -617,6 +679,40 @@
 
       // reset locate index
       locateIndex = 0;
+    }
+
+    const handleStoreButton = () => {
+      numKeyState = numKeyState === numKeyStates.STORE ? numKeyStates.INPUT : numKeyStates.STORE;
+
+      ui.recallButton.classList.remove('Button--active');
+      ui.storeButton.classList.remove('Button--active');
+      updateElement(ui.locateStatus, '');
+
+      if (numKeyState === numKeyStates.STORE) {
+        ui.storeButton.classList.add('Button--active');
+        updateElement(ui.locateStatus, `STORING`);
+      }
+    }
+
+    const handleRecallButton = () => {
+      numKeyState = numKeyState === numKeyStates.RECALL ? numKeyStates.INPUT : numKeyStates.RECALL;
+
+      ui.recallButton.classList.remove('Button--active');
+      ui.storeButton.classList.remove('Button--active');
+      updateElement(ui.locateStatus, '');
+
+      if (numKeyState === numKeyStates.RECALL) {
+        ui.recallButton.classList.add('Button--active');
+        updateElement(ui.locateStatus, `RECALLING`);
+      }
+    }
+
+    const updateLocateAddressFromArray = () => {
+      const { RECALL, STORE } = numKeyStates;
+      const address = locateAddress.join('');
+      const text = numKeyState === RECALL ? 'RECALLING' : 'STORING';
+
+      updateElement(ui.locateStatus, `${text} ${address}`);
     }
 
     const setSocketStatus = text => {
@@ -691,7 +787,9 @@
         numButtons: document.querySelectorAll('.Button--num'),
         playheadTime: getElement('playhead_time'),
         playheadStatus: getElement('playhead_status'),
-        socket: document.querySelector('.Socket')
+        recallButton: getElement('recall'),
+        socket: document.querySelector('.Socket'),
+        storeButton: getElement('store')
       };
 
       updateUiFromState();
