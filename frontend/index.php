@@ -59,8 +59,8 @@
       color: var(--color_counter);
       padding: var(--padding--medium);
       display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr 1fr;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: 1fr;
       line-height: 1;
       align-items: center;
       justify-items: center;
@@ -68,7 +68,26 @@
       background: linear-gradient(var(--color_backgrond--alt) 0%, var(--color_backgrond) 100%);
       font-family: 'Segment';
       width: 100vw;
+      grid-gap: var(--padding--medium);
+    }
 
+    .Playhead {
+      grid-column: 1 / 5;
+    }
+
+    .PlayheadFunctions {
+      grid-column: 5 / 6;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+      grid-gap: var(--padding--medium);
+    }
+
+    .Locate {
+      grid-column: 6 / end;
     }
 
     .Counter__section {
@@ -212,11 +231,6 @@
         grid-template-rows: 1fr 3fr;
       }
 
-      .Counter {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
-      }
-
       .Counter__time {
         font-size: 8rem;
       }
@@ -234,8 +248,6 @@
 
       .Counter {
         padding: var(--padding--large);
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
       }
 
       .Socket {
@@ -267,11 +279,6 @@
       .Remote > div {
         grid-gap: var(--padding--large);
       }
-
-      .Counter {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
-      }
     }
   </style>
 </head>
@@ -279,12 +286,16 @@
   <div class="Container">
     <!-- COUNTER START -->
     <div class="Counter">
-      <div class="Counter__section">
+      <div class="Counter__section Playhead">
         <span class="Counter__heading">TAPE TIME</span>
         <span class="Counter__time" data-id="playhead_time">09:47.2</span>
         <span class="Counter__indicator" data-id="playhead_status"> </span>
       </div>
-      <div class="Counter__section">
+      <div class="PlayheadFunctions">
+        <button class="Button Button--Reset Command" data-id="reset" data-cmd="reset/1"><div class="content">&lt;<br />Reset</div></button>
+        <button class="Button Button--Current" data-id="current"><div class="content">&gt;<br />CRNT</div></button>
+      </div>
+      <div class="Counter__section Locate">
         <span class="Counter__heading">EVENT TIME</span>
         <span class="Counter__time" data-id="locate_time">00:00.0</span>
         <span class="Counter__indicator" data-id="locate_status"></span>
@@ -296,10 +307,8 @@
     <div class="Remote">
       <!-- FUNCTIONS START -->
       <div class="Functions">
-        <button class="Button Button--Reset Command" data-id="reset" data-cmd="reset/1"><div class="content">Reset</div></button>
         <button class="Button Button--Rtz Command" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
         <button class="Button Button--Speed Command" data-id="speed"><div class="content">Speed</div></button>
-        <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
         <button class="Button Button--Locate Command" data-id="locate"><div class="content">Loc</div></button>
 
 
