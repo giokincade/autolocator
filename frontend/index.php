@@ -303,9 +303,10 @@
       <div class="Functions">
         <button class="Button Button--Reset Command" data-id="reset" data-cmd="reset/1"><div class="content">Reset</div></button>
         <button class="Button Button--Rtz Command" data-id="rtz" data-cmd="locate/0"><div class="content">RTZ</div></button>
-        <button class="Button Button--Locate Command" data-id="locate"><div class="content">Loc</div></button>
-        <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
         <button class="Button Button--Speed Command" data-id="speed"><div class="content">Speed</div></button>
+        <button class="Button Button--Current" data-id="current"><div class="content">CRNT</div></button>
+        <button class="Button Button--Locate Command" data-id="locate"><div class="content">Loc</div></button>
+
 
         <!-- <button class="Button Button--AutoPunchOn" data-id="autopunch_on"><div class="content">AP On</div></button>
         <button class="Button Button--AutoPunchIn" data-id="autopunch_in"><div class="content">AP In</div></button>
