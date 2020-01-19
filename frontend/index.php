@@ -68,6 +68,7 @@
       background: linear-gradient(var(--color_backgrond--alt) 0%, var(--color_backgrond) 100%);
       font-family: 'Segment';
       width: 100vw;
+
     }
 
     .Counter__section {
@@ -99,6 +100,7 @@
       font-size: 1.6rem;
       color: var(--color_counter);
       z-index: 1;
+      opacity: 0.75;
     }
 
     /* REMOTE */
@@ -205,11 +207,6 @@
       height: 12rem; */
     }
 
-    /* SOCKET CONNECTION */
-    .Socket {
-
-    }
-
     @media screen and (min-width: 667px) {
       .Container {
         grid-template-rows: 1fr 3fr;
@@ -242,8 +239,8 @@
       }
 
       .Socket {
-        top: var(--padding--medium);
-        right: var(--padding--medium);
+        top: var(--padding--large);
+        right: var(--padding--large);
       }
 
       .Counter__time {
@@ -275,26 +272,24 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr;
       }
-
-      .Socket {
-      }
     }
   </style>
 </head>
 <body>
   <div class="Container">
-    <span class="Socket" data-id="socket"></span>
-
     <!-- COUNTER START -->
     <div class="Counter">
       <div class="Counter__section">
+        <span class="Counter__heading">TAPE TIME</span>
         <span class="Counter__time" data-id="playhead_time">09:47.2</span>
         <span class="Counter__indicator" data-id="playhead_status"> </span>
       </div>
       <div class="Counter__section">
+        <span class="Counter__heading">EVENT TIME</span>
         <span class="Counter__time" data-id="locate_time">00:00.0</span>
         <span class="Counter__indicator" data-id="locate_status"></span>
       </div>
+      <span class="Socket" data-id="socket"></span>
     </div>
     <!-- COUNTER END -->
 
