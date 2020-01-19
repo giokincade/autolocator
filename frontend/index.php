@@ -12,6 +12,8 @@
       --color_button: hsl(0, 0%, 10%);
       --color_button--active: hsl(0, 0%, 12%);
       --color-text: hsl(5, 90%, 95%);
+      --color-controls: hsl(45, 90%, 50%);
+      --color-blue: hsl(220, 90%, 40%);
       --padding--small: 1rem;
       --padding--medium: 2rem;
       --padding--large: 4rem;
@@ -142,7 +144,7 @@
     .Button {
       margin: 0;
       padding: 0;
-      border: none;
+      border: 1px solid #555;
       position: relative;
       color: var(--color-text);
       font-size: 1.6rem;
@@ -153,10 +155,6 @@
       background: transparent;
       border-bottom: 4px solid;
       border-bottom-color: transparent;
-    }
-
-    .Button:active {
-      background: var(--color_button--active);
     }
 
     .Button .content {
@@ -176,21 +174,23 @@
       /* background: linear-gradient(#e8e8e8 0%, #dfdfdf 100%); */
     }
 
+    .Button:active,
     .Button--active {
-      /* background: linear-gradient(var(--color_button--active) 0%, var(--color_button--active) 100%) !important; */
       border-bottom-color: var(--color-text);
     }
 
     .Button--active.Button--Play,
-    .Button--active.Button--Stop,
     .Button--active.Button--Rewind,
     .Button--active.Button--FF {
+      border-bottom-color: var(--color-controls);
+    }
 
+    .Button--active.Button--Stop {
+      border-bottom-color: var(--color-blue);
     }
 
     .Button--active.Button--Rec {
-
-
+      border-bottom-color: var(--color_counter);
     }
 
     /* CONTROLS */
@@ -467,8 +467,8 @@
     const updateLocateTime = () => {
       if (!('locate_time' in state)) return;
       setTime(ui.locateTime, state.locate_time);
-      locate = timeToArray(state.locate_time);
       state.locate_time = false;
+      locate = timeToArray(state.locate_time);
     }
 
     const updatePlayhead = () => {
@@ -517,6 +517,24 @@
       const value = formatTimeString(minutes, seconds, decimal);
 
       updateElement(element, value);
+
+      // get locate time as int
+      const locateTime = timeFromArray(locate);
+
+      // update locate commands
+      updateLocateCommands(locateTime);
+    }
+
+    const updateLocateCommands = time => {
+      // update store locate command
+      const storeElement = ui.element('store');
+      const storeCommand = `store/${time}`;
+      updateElementCommand(storeElement, storeCommand);
+
+      // update locate command
+      const locateElement = ui.element('locate');
+      const locateCommand = `locate/${time}`;
+      updateElementCommand(locateElement, locateCommand);
     }
 
     const updateSpeed = () => {
@@ -661,6 +679,9 @@
 
       // set locate html
       setTime(ui.locateTime, time);
+
+      // set locate button commands
+      updateLocateCommands(time);
 
       // update locate time array
       locate = timeToArray(time);
