@@ -7,10 +7,10 @@ const size_t _JSON_SIZE = JSON_OBJECT_SIZE(2) + 31;
 
 State::State(Clock clock) {
     _time = clock.getTime();
-    _isMovingForward = clock.isMovingForward()
+    _isMovingForwards = clock.isMovingForward();
 }
 
-State::toJson() {
+String State::toJson() {
     StaticJsonDocument<_JSON_SIZE> doc;
     doc["time"] = _time;
     doc["isMovingForwards"] = _isMovingForwards;

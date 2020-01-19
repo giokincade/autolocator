@@ -1,5 +1,5 @@
-#ifndef Clock_h
-#define Clock_h
+#ifndef State_h
+#define State_h
 
 #include "Arduino.h"
 #include "Clock.h"
@@ -11,4 +11,6 @@ class State {
     private:
        String _time;
        bool _isMovingForwards;
-}
+};
+
+#endif

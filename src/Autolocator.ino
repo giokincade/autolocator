@@ -1,7 +1,3 @@
-// Arduino communicates with PHPoC [WiFi] Shield via pins 10, 11, 12 and 13 on
-// the Uno, and pins 10, 50, 51 and 52 on the Mega. Therefore, these pins CANNOT
-// be used for general I/O.
-
 #include "Arduino.h"
 #include "Socket.h"
 #include "Clock.h"
@@ -41,20 +37,15 @@ static void handleTachPulse() {
 
 
 void loop() {
-    State state = State(clock);
-    Serial.println(state.toJson());
-    delay(1000);
+    processMessage(socket.read());
 }
 
 void processMessage(String message) {
-  if (message.length() <= 0) return;
-
-  int delimiterIndex = message.indexOf('/');
-  String key = message.substring(0, delimiterIndex);
-  String value = message.substring(delimiterIndex + 1, message.length());
-
-  Serial.println(key);
-  Serial.println(value);
+    if (message.length() <= 0) return;
+    Serial.println(message);
+    State state = State(clock);
+    String json = state.toJson();
+    socket.write(json.c_str());
+    Serial.println(json);
 }
-
 #endif
