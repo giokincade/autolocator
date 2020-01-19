@@ -59,8 +59,8 @@
       color: var(--color_counter);
       padding: var(--padding--medium);
       display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      grid-template-rows: 1fr;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
       line-height: 1;
       align-items: center;
       justify-items: center;
@@ -71,12 +71,7 @@
       grid-gap: var(--padding--medium);
     }
 
-    .Playhead {
-      grid-column: 1 / 5;
-    }
-
     .PlayheadFunctions {
-      grid-column: 5 / 6;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: 1fr 1fr;
@@ -86,14 +81,9 @@
       grid-gap: var(--padding--medium);
     }
 
-    .Locate {
-      grid-column: 6 / end;
-    }
-
     .Counter__section {
       display: grid;
       align-self: start;
-      min-width: 40rem;
     }
 
     .Counter__time,
@@ -128,7 +118,7 @@
       background: linear-gradient(var(--color_backgrond) 0%, var(--color_backgrond--alt) 100%);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(6, 1fr);
+      grid-template-rows: auto;
       grid-template-areas:
         "f f f f f"
         ". . n n n"
@@ -248,6 +238,24 @@
 
       .Counter {
         padding: var(--padding--large);
+        grid-template-columns: repeat(9, 1fr);
+        grid-template-rows: 1fr;
+      }
+
+
+      .Playhead {
+        grid-column: 1 / 5;
+      }
+
+      .PlayheadFunctions {
+        grid-column: 5 / 6;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      .Locate {
+        grid-column: 6 / end;
       }
 
       .Socket {
@@ -256,7 +264,7 @@
       }
 
       .Counter__time {
-        font-size: 14rem;
+        font-size: 10rem;
       }
 
       .Remote {
@@ -271,6 +279,14 @@
     }
 
     @media screen and (min-width: 1024px) {
+      .Counter__section {
+        min-width: 40rem;
+      }
+
+      .Counter__time {
+        font-size: 14rem;
+      }
+
       .Remote {
         padding: var(--padding--large);
         grid-gap: var(--padding--large);
