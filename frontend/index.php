@@ -364,7 +364,7 @@
       locate_time: false,
       speed: true
     };
-    let locate = [0, 1, 0, 0, 0];
+    let locate = [0, 0, 0, 0, 0];
     let locateIndex = 0;
 
     let numKeyState = numKeyStates.INPUT;
