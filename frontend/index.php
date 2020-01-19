@@ -365,6 +365,7 @@
         ff: false
       },
       playhead_time: 130.1,
+      locate_time: 12.5,
       speed: true
     };
     let locate = [0, 1, 0, 0, 0];
@@ -443,6 +444,7 @@
       }
 
       updateControls();
+      updateLocateTime();
       updatePlayhead();
       updatePlayheadStatus();
       updateSpeed();
@@ -460,6 +462,13 @@
           isActive && element.classList.add('Button--active');
         }
       });
+    }
+
+    const updateLocateTime = () => {
+      if (!('locate_time' in state)) return;
+      setTime(ui.locateTime, state.locate_time);
+      locate = timeToArray(state.locate_time);
+      state.locate_time = false;
     }
 
     const updatePlayhead = () => {
@@ -496,9 +505,9 @@
       updateElement(ui.playheadStatus, status);
     }
 
-    const updateLocateFromTime = time => setTime(ui.locateTime, time);
-
     const updateLocateFromArray = () => {
+      if ('locate_time' in state && !!state.locate_time) return;
+
       const element = ui.locateTime;
 
       const minutes = locate.slice(0, 2).join('');
@@ -508,24 +517,6 @@
       const value = formatTimeString(minutes, seconds, decimal);
 
       updateElement(element, value);
-
-      // get locate time as int
-      const locateTime = timeFromArray(locate);
-
-      // update locate commands
-      updateLocateCommands(locateTime);
-    }
-
-    const updateLocateCommands = time => {
-      // update store locate command
-      const storeElement = ui.element('store');
-      const storeCommand = `store/${time}`;
-      updateElementCommand(storeElement, storeCommand);
-
-      // update locate command
-      const locateElement = ui.element('locate');
-      const locateCommand = `locate/${time}`;
-      updateElementCommand(locateElement, locateCommand);
     }
 
     const updateSpeed = () => {
@@ -671,9 +662,6 @@
       // set locate html
       setTime(ui.locateTime, time);
 
-      // set locate button commands
-      updateLocateCommands(time);
-
       // update locate time array
       locate = timeToArray(time);
 
@@ -792,11 +780,11 @@
         storeButton: getElement('store')
       };
 
-      updateUiFromState();
-
       bindEvents();
 
       updateLocateFromArray();
+
+      updateUiFromState();
 
       if (!socket) {
         connectSocket();
