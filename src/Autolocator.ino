@@ -56,14 +56,12 @@ void processMessage() {
             // clear out the transmission buffer:
             client.flush();
             Serial.println("We have a new client");
-            client.println("Hello, client!");
             alreadyConnected = true;
         }
 
         if (client.available() > 0) {
             // read the bytes incoming from the client:
-            char thisChar = client.read();
-
+            while(client.read() > -1);
             String json = State(clock).toJson();
             char* jsonCstr = json.c_str();
             server.write(jsonCstr, json.length());
@@ -72,4 +70,5 @@ void processMessage() {
         }
     }
 }
+
 #endif
