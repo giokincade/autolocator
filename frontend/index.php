@@ -562,8 +562,9 @@
             const element = getButtonElementFromEvent(e);
             sendCommandFromElement(element);
 
-            // reset locateIndex
+            // reset locateIndex and address
             locateIndex = 0;
+            resetLocateAddress();
           }, false);
         });
       });
@@ -584,6 +585,7 @@
         ui.currentButton.addEventListener(eventType, e => {
           e.preventDefault();
           handleCurrentButton();
+          resetLocateAddress();
         }, false);
       });
 
@@ -621,6 +623,7 @@
       const { INPUT, RECALL, STORE } = numKeyStates;
 
       if (numKeyState === INPUT) {
+        resetLocateAddress();
         handleNumInput(digit);
       }
 
@@ -662,13 +665,7 @@
         sendMessage(command);
 
         // reset
-        locateAddressIndex = 0;
-        locateAddress = [];
-        numKeyState = numKeyStates.INPUT;
-
-        ui.recallButton.classList.remove('Button--active');
-        ui.storeButton.classList.remove('Button--active');
-        setTimeout(() => { updateElement(ui.locateStatus, ''); }, 150);
+        resetLocateAddress();
       }
     }
 
@@ -700,6 +697,8 @@
       if (numKeyState === numKeyStates.STORE) {
         ui.storeButton.classList.add('Button--active');
         updateElement(ui.locateStatus, `STORING`);
+      } else {
+        resetLocateAddress();
       }
     }
 
@@ -713,6 +712,8 @@
       if (numKeyState === numKeyStates.RECALL) {
         ui.recallButton.classList.add('Button--active');
         updateElement(ui.locateStatus, `RECALLING`);
+      } else {
+        resetLocateAddress();
       }
     }
 
@@ -722,6 +723,15 @@
       const text = numKeyState === RECALL ? 'RECALLING' : 'STORING';
 
       updateElement(ui.locateStatus, `${text} ${address}`);
+    }
+
+    const resetLocateAddress = () => {
+      ui.recallButton.classList.remove('Button--active');
+      ui.storeButton.classList.remove('Button--active');
+      setTimeout(() => { updateElement(ui.locateStatus, ''); }, 100);
+      locateAddressIndex = 0;
+      locateAddress = [];
+      numKeyState = numKeyStates.INPUT;
     }
 
     const setSocketStatus = text => {
