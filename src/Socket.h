@@ -2,7 +2,7 @@
 
 class Socket {
     public:
-        Socket();
+        Socket(String path = "autolocator", int port = 80);
         String readMessage();
         void writeMessage(String message);
 

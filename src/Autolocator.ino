@@ -19,7 +19,7 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
-    socket = Socket();
+    socket = Socket(Constants::websocketPath, Constants::websocketPort);
     pinMode(Pins::tachPulse, INPUT_PULLUP);
     attachInterrupt(
         digitalPinToInterrupt(Pins::tachPulse),

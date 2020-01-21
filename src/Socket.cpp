@@ -2,11 +2,11 @@
 #import "Arduino.h"
 #import "Socket.h"
 
-Socket::Socket() {
-    _server = PhpocServer(80);
+Socket::Socket(String path, int port) {
+    _server = PhpocServer(port);
 
     Phpoc.begin(PF_LOG_SPI | PF_LOG_NET);
-    _server.beginWebSocket("autolocator");
+    _server.beginWebSocket(path.c_str());
 
     Serial.print("Chat server address : ");
     Serial.println(Phpoc.localIP());
