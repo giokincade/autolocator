@@ -44,7 +44,7 @@ void loop() {
 void processMessage() {
     String message = socket.readMessage();
 
-    if (message) {
+    if (message.length() > 0) {
         String json = State(clock).toJson();
         socket.writeMessage(json);
         Serial.println(json);

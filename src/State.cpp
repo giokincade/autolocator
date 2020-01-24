@@ -12,7 +12,7 @@ State::State(Clock clock) {
 
 String State::toJson() {
     StaticJsonDocument<_JSON_SIZE> doc;
-    doc["time"] = _time;
+    doc["playhead_time"] = _time;
     doc["isMovingForwards"] = _isMovingForwards;
 
     String output = "";
