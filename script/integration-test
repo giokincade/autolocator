@@ -1,0 +1,6 @@
+#!/usr/local/bin/python3
+
+import websocket as ws
+
+socket = ws.WebSocket()
+socket.connect("ws://192.168.0.187/autolocator")
