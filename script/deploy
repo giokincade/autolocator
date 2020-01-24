@@ -5,5 +5,5 @@ source script/env
 assertBoardConnected
 
 arduino-cli compile --fqbn $FQBN --output bin/Autolocator.hex 'src/Autolocator.ino'
-#arduino-cli upload --fqbn $FQBN --port $DEVICE --verbose --input bin/Autolocator.hex
-#cat $DEVICE
+arduino-cli upload --fqbn $FQBN --port $DEVICE --verbose --input bin/Autolocator.hex
+cat $DEVICE
