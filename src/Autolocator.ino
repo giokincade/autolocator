@@ -3,6 +3,7 @@
 #include "State.h"
 #include "Socket.h"
 #include "Constants.h"
+#include "Control.h"
 
 #ifndef Autolocator_ino
 #define Autolocator_ino
@@ -12,6 +13,7 @@
 static Clock clock = Clock(Pins::direction, Constants::playbackRps);
 
 Socket socket;
+Control control;
 boolean alreadyConnected = false;
 
 
@@ -38,20 +40,17 @@ static void handleTachPulse() {
 
 
 void loop() {
-    String json = State(clock).toJson();
-    socket.writeMessage(json);
-    //Serial.println(json);
-    delay(100);
-}
-
-void processMessage() {
     String message = socket.readMessage();
 
     if (message.length() > 0) {
+        Serial.println(message);
+        control.runCommandFromText(message);
+    } else {
         String json = State(clock).toJson();
         socket.writeMessage(json);
-        Serial.println(json);
     }
+
+    delay(100);
 }
 
 #endif
