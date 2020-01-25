@@ -2,7 +2,7 @@
 
 namespace Pins {
     const int tachPulse = 2;
-    const int direction = 10;
+    const int direction = 8;
 }
 
 namespace Constants {

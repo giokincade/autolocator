@@ -6,10 +6,11 @@ Clock::Clock(int directionPin, double playbackRps) {
     _directionPin = directionPin;
     _rotationsFromStart = 0L;
     _playbackRps = playbackRps;
+    pinMode(directionPin, INPUT_PULLUP);
 }
 
 bool Clock::isMovingForward() {
-    return analogRead(_directionPin) < 500;
+    return digitalRead(_directionPin) == LOW;
 }
 
 bool Clock::isMovingBackwards() {

@@ -6,11 +6,12 @@
 
 class State {
     public:
-       State(Clock clock);
-       String toJson();
+        State(Clock clock);
+        String toJson();
     private:
-       String _time;
-       bool _isMovingForwards;
+        String _time;
+        double _secondsFromStart;
+        bool _isMovingForwards;
 };
 
 #endif

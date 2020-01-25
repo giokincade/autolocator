@@ -38,7 +38,10 @@ static void handleTachPulse() {
 
 
 void loop() {
-    processMessage();
+    String json = State(clock).toJson();
+    socket.writeMessage(json);
+    //Serial.println(json);
+    delay(100);
 }
 
 void processMessage() {
