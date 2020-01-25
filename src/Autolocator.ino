@@ -44,7 +44,11 @@ void loop() {
 
     if (message.length() > 0) {
         Serial.println(message);
-        control.runCommandFromText(message);
+        if (message.startsWith("reset")) {
+            clock.reset();
+        } else {
+            control.runCommandFromText(message);
+        }
     } else {
         String json = State(clock).toJson();
         socket.writeMessage(json);

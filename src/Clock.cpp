@@ -13,6 +13,10 @@ bool Clock::isMovingForward() {
     return digitalRead(_directionPin) == LOW;
 }
 
+void Clock::reset() {
+    _rotationsFromStart = 0l;
+}
+
 bool Clock::isMovingBackwards() {
     return !isMovingBackwards();
 }

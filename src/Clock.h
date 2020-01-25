@@ -11,6 +11,7 @@ class Clock {
     bool isMovingForward();
     bool isMovingBackwards();
     double getSecondsFromStart();
+    void reset();
     String getTime();
   private:
     int _directionPin;
